@@ -1,0 +1,17 @@
+{
+  "SQLConnectionStrings": {
+    "DefaultConnection": "Data Source=DESKTOP-1EUC064;AttachDbFilename=D:\\DeliveryServicePrimary.mdf;Integrated Security=True;Trust Server Certificate=True",
+  },
+  "RedisConnectionOptions": {
+    "Configuration": "localhost",
+    "InstanceName": "local"
+  },
+  "MongoOptions": {
+    "MongoDefaultConnection": "mongodb://localhost:27017",
+    "DBName": "DeliveryService",
+    "SoldGoodsCollectionName": "sold",
+    "ReportsCollectionName": "reports",
+    "OrdersCollectionName": "orders",
+    "AuditRecordsCollectionName": "audit"
+  }
+}
