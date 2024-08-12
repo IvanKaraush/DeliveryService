@@ -1,0 +1,14 @@
+{
+  "RepositoryOptions": {
+    "AuditExpirationDays": 7,
+    "HotGoodsExpirationHours": 24,
+    "CacheExpirationMins": 5
+  },
+  "GoodsImagesLinkTemplate": "https://localhost:7143/files/images/goods/",
+  "TgBotToken": "hui",
+  "HostTgId": "hui",
+  "HostAuth": {
+    "Login": "HostLogin",
+    "Password": "HostPassword"
+  }
+}

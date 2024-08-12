@@ -1,4 +1,5 @@
 ﻿using Domain.Models.ApplicationModels;
+using Domain.Models.Entities.SQLEntities;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain.Models.Entities.MongoDBEntities
@@ -13,7 +14,7 @@ namespace Domain.Models.Entities.MongoDBEntities
         public Dictionary<int, int> GoodsList { get; set; }//article|count
         public bool IsCooking { get; set; }
         public DateTime? TimeMarker { get; set; }
-        public Card? PaymentCard { get; set; }//null==NULLичные
+        public string? PaymentCard { get; set; }//null==NULLичные
         public bool AreBonusesUsing { get; set; }
     }
 }

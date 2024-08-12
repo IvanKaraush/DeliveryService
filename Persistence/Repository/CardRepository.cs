@@ -1,5 +1,5 @@
 ﻿using Domain.Models.ApplicationModels;
-using Domain.Models.Entities;
+using Domain.Models.Entities.SQLEntities;
 using Domain.Stores;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
@@ -15,13 +15,13 @@ namespace Persistence.Repository
             Context = context;
         }
         private readonly SQLContext Context;
-        public async void AddCard(Card card)
+        public async Task AddCard(Card card)
         {
             await Context.Cards.AddAsync(card);
             await Context.SaveChangesAsync();
         }
 
-        public async void RemoveCard(string number)
+        public async Task RemoveCard(string number)
         {
             Card? card = await Context.Cards.FirstOrDefaultAsync(u => u.Number.Equals(number));
             if (card == null)

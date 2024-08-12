@@ -1,18 +1,19 @@
-﻿using Domain.Models.Entities;
+﻿using Domain.Models.Entities.SQLEntities;
 using Domain.Models.VievModels;
 
 namespace Domain.Stores
 {
     public interface IUserStore
     {
-        void AddUser(User user);
-        void RemoveUser(Guid id);
-        void EditUserTelegram(Guid id, string newTelegramId);
-        void DebitBonuses(Guid id, decimal amount);
+        Task AddUser(User user);
+        Task RemoveUser(Guid id);
+        Task EditUserTelegram(Guid id, string newTelegramId);
+        Task AddUserBirthDate(Guid id, DateOnly birthDate);
+        Task DebitBonuses(Guid id, decimal amount);
         Task<User> GetUserByAuth(AuthModel authModel);
         Task<User> GetUserById(Guid id);
-        void EditUserAuth(Guid id, AuthModel newAuth);
-        void AssignAsAdmin(Guid id);
-        void UnassignAsAdmin(Guid id);
+        Task EditUserAuth(Guid id, AuthModel newAuth);
+        Task AssignAsAdmin(Guid id);
+        Task UnassignAsAdmin(Guid id);
     }
 }

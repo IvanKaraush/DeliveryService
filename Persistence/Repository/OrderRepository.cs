@@ -1,6 +1,6 @@
 ﻿using Domain.Models.ApplicationModels;
-using Domain.Models.Entities;
 using Domain.Models.Entities.MongoDBEntities;
+using Domain.Models.Entities.SQLEntities;
 using Domain.Stores;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -20,7 +20,7 @@ namespace Persistence.Repository
             Context = context;
         }
         private readonly IMongoContext Context;
-        public async void AcceptOrder(Guid id)
+        public async Task AcceptOrder(Guid id)
         {
             Order? order = await Context.Orders.AsQueryable().Where(o => !o.IsCooking).FirstOrDefaultAsync(o => o.Id == id);
             if (order == null)
@@ -29,7 +29,7 @@ namespace Persistence.Repository
             await Context.Orders.ReplaceOneAsync(new BsonDocument("Id", id), order);
         }
 
-        public async void AddOrder(Order order)
+        public async Task AddOrder(Order order)
         {
             await Context.Orders.InsertOneAsync(order);
         }
@@ -47,12 +47,12 @@ namespace Persistence.Repository
             return await Context.Orders.AsQueryable().OrderBy(o=>o.Coordinates.CalcDistance(restaurantCoordinates)).Take(count).ToListAsync();
         }
 
-        public async void RemoveOrder(Guid id)
+        public async Task RemoveOrder(Guid id)
         {
             await Context.Orders.DeleteOneAsync(new BsonDocument("Id", id));
         }
 
-        public async void RemoveUnitFromList(Guid id, int article)
+        public async Task RemoveUnitFromList(Guid id, int article)
         {
             Order? order = await Context.Orders.AsQueryable().FirstOrDefaultAsync(o => o.Id == id);
             if (order == null)
@@ -68,12 +68,10 @@ namespace Persistence.Repository
             await Context.Orders.ReplaceOneAsync(new BsonDocument("Id", id), order);
         }
 
-        public async Task<Order> GetOrderByUserId(Guid id)
+        public async Task<List<Order>> GetOrdersByUserId(Guid id)
         {
-            Order? order = await Context.Orders.AsQueryable().FirstOrDefaultAsync(o => o.UserId == id);
-            if (order == null)
-                throw new DoesNotExistException(typeof(Order));
-            return order;
+            List<Order> orders = await Context.Orders.AsQueryable().Where(o => o.UserId == id).ToListAsync();
+            return orders;
         }
     }
 }

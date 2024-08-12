@@ -18,7 +18,7 @@ namespace Persistence.Repository
             Context = context;
         }
         private readonly IMongoContext Context;
-        public async void AddRecord(AuditLogRecord record)
+        public async Task AddRecord(AuditLogRecord record)
         {
             record.Recorded = DateTime.Now;
             await Context.AuditRecords.InsertOneAsync(record);

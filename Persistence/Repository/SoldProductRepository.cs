@@ -19,7 +19,7 @@ namespace Persistence.Repository
         }
         private readonly IMongoContext Context;
 
-        public async void AddSoldProduct(SoldProduct soldProduct)
+        public async Task AddSoldProduct(SoldProduct soldProduct)
         {
             await Context.SoldGoods.InsertOneAsync(soldProduct);
         }

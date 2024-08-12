@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Stores
+namespace Application.Interfaces
 {
-    public interface IReportStore
+    public interface IReportAdminService
     {
-        Task AddReport(Report report);
         Task RemoveReport(DateTime id);
         Task<List<DateTime>> GetReportsIds();
         Task<Report> GetReportById(DateTime id);

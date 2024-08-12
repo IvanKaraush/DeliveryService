@@ -1,6 +1,4 @@
-﻿
-
-namespace Domain.Models.Entities
+﻿namespace Domain.Models.Entities.SQLEntities
 {
     public class Restaurant
     {

@@ -36,4 +36,14 @@ namespace Domain.Models.ApplicationModels
     {
         public string Message = "File was not sent";
     }
+    public class WasAlreadySetException : Exception
+    {
+        public WasAlreadySetException(string name) 
+        {
+            name = name.ToLower();
+            name = Char.ToUpper(name[0]) + name.Remove(0, 1);
+            Message = name + " was already set";
+        }
+        public string Message;
+    }
 }

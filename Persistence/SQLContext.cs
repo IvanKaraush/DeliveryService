@@ -1,4 +1,4 @@
-﻿using Domain.Models.Entities;
+﻿using Domain.Models.Entities.SQLEntities;
 using Microsoft.EntityFrameworkCore;
 using Persistence.EntitiesOptions;
 

@@ -1,32 +1,34 @@
 ﻿using Domain.Models.ApplicationModels;
-using Domain.Models.Entities;
+using Domain.Models.Entities.SQLEntities;
 using Domain.Models.VievModels;
 using Domain.Stores;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Persistence.Repository
 {
     public class ProductRepository : IProductStore
     {
-        public ProductRepository(SQLContext context, IDistributedCache cache) 
+        public ProductRepository(SQLContext context, IDistributedCache cache, IOptions<ReposOptions> repositoryOptions) 
         {
             Context = context;
             Cache = cache;
+            CacheOptions = new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromMinutes(repositoryOptions.Value.CacheExpirationMins) };
         }
         private readonly SQLContext Context;
         private readonly IDistributedCache Cache;
         private readonly DistributedCacheEntryOptions CacheOptions = new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromMinutes(5) };
-        public async void AddProduct(Product product)
+        public async Task AddProduct(Product product)
         {
             await Context.Goods.AddAsync(product);
             await Context.SaveChangesAsync();
             await Cache.SetStringAsync(product.Article.ToString(), JsonConvert.SerializeObject(product), CacheOptions);
         }
 
-        public async void EditPrice(int article, decimal price)
+        public async Task EditPrice(int article, decimal price)
         {
             Product? product;
             string? productString = await Cache.GetStringAsync(article.ToString());
@@ -45,7 +47,7 @@ namespace Persistence.Repository
             await Cache.SetStringAsync(product.Article.ToString(), JsonConvert.SerializeObject(product), CacheOptions);
         }
 
-        public async void Hide(int article)
+        public async Task Hide(int article)
         {
             Product? product;
             string? productString = await Cache.GetStringAsync(article.ToString());
@@ -63,7 +65,7 @@ namespace Persistence.Repository
             await Context.SaveChangesAsync();
         }
 
-        public async void RemoveProduct(int article)
+        public async Task RemoveProduct(int article)
         {
             Product? product;
             string? productString = await Cache.GetStringAsync(article.ToString());
@@ -80,7 +82,7 @@ namespace Persistence.Repository
             await Context.SaveChangesAsync();
         }
 
-        public async void Show(int article)
+        public async Task Show(int article)
         {
             Product? product;
             string? productString = await Cache.GetStringAsync(article.ToString());
@@ -98,7 +100,7 @@ namespace Persistence.Repository
             await Context.SaveChangesAsync();
         }
 
-        public async void UpdateCookingTime(int article, TimeOnly lastCookingTime)
+        public async Task UpdateCookingTime(int article, TimeOnly lastCookingTime)
         {
             Product? product;
             string? productString = await Cache.GetStringAsync(article.ToString());
@@ -125,7 +127,7 @@ namespace Persistence.Repository
             await Cache.SetStringAsync(product.Article.ToString(), JsonConvert.SerializeObject(product), CacheOptions);
         }
 
-        public async void UpdateRating(int article, int mark)
+        public async Task UpdateRating(int article, int mark)
         {
             Product? product;
             string? productString = await Cache.GetStringAsync(article.ToString());

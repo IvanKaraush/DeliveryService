@@ -19,7 +19,7 @@ namespace Persistence.Repository
             Context = context;
         }
         private readonly IMongoContext Context;
-        public async void AddReport(Report report)
+        public async Task AddReport(Report report)
         {
             report.Received = DateTime.Now;
             await Context.Reports.InsertOneAsync(report);
@@ -38,7 +38,7 @@ namespace Persistence.Repository
             return await Context.Reports.AsQueryable().Select(r => r.Received).ToListAsync();
         }
 
-        public async void RemoveReport(DateTime id)
+        public async Task RemoveReport(DateTime id)
         {
             await Context.Reports.DeleteOneAsync(new BsonDocument("Received", id));
         }

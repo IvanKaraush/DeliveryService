@@ -1,3 +1,4 @@
+using API.DIConfiguration;
 using Domain.Models.ApplicationModels;
 using Domain.Stores;
 using Microsoft.EntityFrameworkCore;
@@ -13,21 +14,14 @@ namespace API
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Configuration.AddJsonFile("DBOptions.json");
+            builder.Configuration.AddJsonFile("ConstsOptions.json");
             builder.Services.Configure<MongoDBOptions>(builder.Configuration.GetSection(MongoDBOptions.MongoOptions));
+            builder.Services.Configure<ReposOptions>(builder.Configuration.GetSection(ReposOptions.RepositoryOptions));
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddDbContext<SQLContext>(options=> 
-            {
-                options.UseSqlServer(builder.Configuration.GetSection("SQLConnectionStrings").GetValue<string>("DefaultConnection")/*, sqlOptions=> sqlOptions.UseDateOnlyTimeOnly()*/);
-            });
-            builder.Services.AddSingleton<IMongoContext, MongoContext>();
-            builder.Services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = builder.Configuration.GetSection("RedisConnectionOptions").GetValue<string>("Configuration");
-                options.InstanceName = builder.Configuration.GetSection("RedisConnectionOptions").GetValue<string>("InstanceName");
-            });
-            builder.Services.AddSingleton<ISoldProductStore, SoldProductRepository>();
+            builder.ConfigureDBs();
+            builder.ConfigureReposes();
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())

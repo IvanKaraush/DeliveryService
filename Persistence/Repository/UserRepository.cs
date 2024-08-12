@@ -1,31 +1,34 @@
-﻿using Domain.Models.Entities;
-using Domain.Models.VievModels;
+﻿using Domain.Models.VievModels;
 using Domain.Models.ApplicationModels;
 using Domain.Stores;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using Domain.Models.Entities.SQLEntities;
+using Microsoft.Extensions.Options;
 
 namespace Persistence.Repository
 {
     public class UserRepository : IUserStore
     {
-        public UserRepository(SQLContext context, IDistributedCache cache) 
+        public UserRepository(SQLContext context, IDistributedCache cache, IOptions<ReposOptions> repositoryOptions) 
         {
             Context = context;
+            Cache = cache;
+            CacheOptions = new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromMinutes(repositoryOptions.Value.CacheExpirationMins) };
         }
         private readonly SQLContext Context;
         private readonly IDistributedCache Cache;
-        private readonly DistributedCacheEntryOptions CacheOptions = new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromMinutes(5) };
+        private readonly DistributedCacheEntryOptions CacheOptions;
 
-        public async void AddUser(User user)
+        public async Task AddUser(User user)
         {
             await Context.Users.AddAsync(user);
             await Context.SaveChangesAsync();
             await Cache.SetStringAsync(user.Id.ToString(), JsonConvert.SerializeObject(user), CacheOptions);
         }
 
-        public async void RemoveUser(Guid id)
+        public async Task RemoveUser(Guid id)
         {
             User? user;
             string? userString = await Cache.GetStringAsync(id.ToString());
@@ -42,7 +45,7 @@ namespace Persistence.Repository
             await Context.SaveChangesAsync();
         }
 
-        public async void EditUserTelegram(Guid id, string newTelegramId)
+        public async Task EditUserTelegram(Guid id, string newTelegramId)
         {
             User? user;
             string? userString = await Cache.GetStringAsync(id.ToString());
@@ -60,7 +63,7 @@ namespace Persistence.Repository
             await Context.SaveChangesAsync();
             await Cache.SetStringAsync(user.Id.ToString(), JsonConvert.SerializeObject(user), CacheOptions);
         }
-        public async void EditUserAuth(Guid id, AuthModel newAuth)
+        public async Task EditUserAuth(Guid id, AuthModel newAuth)
         {
             User? user;
             string? userString = await Cache.GetStringAsync(id.ToString());
@@ -79,7 +82,7 @@ namespace Persistence.Repository
             await Context.SaveChangesAsync();
             await Cache.SetStringAsync(user.Id.ToString(), JsonConvert.SerializeObject(user), CacheOptions);
         }
-        public async void AssignAsAdmin(Guid id)
+        public async Task AssignAsAdmin(Guid id)
         {
             User? user;
             string? userString = await Cache.GetStringAsync(id.ToString());
@@ -97,7 +100,7 @@ namespace Persistence.Repository
             await Context.SaveChangesAsync();
             await Cache.SetStringAsync(user.Id.ToString(), JsonConvert.SerializeObject(user), CacheOptions);
         }
-        public async void UnassignAsAdmin(Guid id)
+        public async Task UnassignAsAdmin(Guid id)
         {
             User? user;
             string? userString = await Cache.GetStringAsync(id.ToString());
@@ -129,7 +132,7 @@ namespace Persistence.Repository
             return user;
         }
 
-        public async void DebitBonuses(Guid id, decimal amount)
+        public async Task DebitBonuses(Guid id, decimal amount)
         {
             User? user;
             string? userString = await Cache.GetStringAsync(id.ToString());
@@ -161,6 +164,26 @@ namespace Persistence.Repository
             if (user == null)
                 throw new DoesNotExistException(typeof(User));
             return user;
+        }
+
+        public async Task AddUserBirthDate(Guid id, DateOnly birthDate)
+        {
+            User? user;
+            string? userString = await Cache.GetStringAsync(id.ToString());
+            if (userString != null)
+            {
+                user = JsonConvert.DeserializeObject<User>(userString);
+            }
+            else
+                user = await Context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null)
+                throw new DoesNotExistException(typeof(User));
+            if (user.BirthDate != null)
+                throw new WasAlreadySetException("Birthdate");
+            user.BirthDate = birthDate;
+            Context.Users.Update(user);
+            await Context.SaveChangesAsync();
+            await Cache.SetStringAsync(user.Id.ToString(), JsonConvert.SerializeObject(user), CacheOptions);
         }
     }   
 }

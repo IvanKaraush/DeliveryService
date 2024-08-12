@@ -1,5 +1,5 @@
 ﻿using Domain.Models.ApplicationModels;
-using Domain.Models.Entities;
+using Domain.Models.Entities.SQLEntities;
 using Domain.Models.VievModels;
 using Domain.Stores;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +13,7 @@ namespace Persistence.Repository
             Context = context;
         }
         private readonly SQLContext Context;
-        public async void AddRestaurant(Restaurant restaurant)
+        public async Task AddRestaurant(Restaurant restaurant)
         {
             await Context.Restaurants.AddAsync(restaurant);
             await Context.SaveChangesAsync();
@@ -24,7 +24,7 @@ namespace Persistence.Repository
             return await Context.Restaurants.Where(r => EF.Functions.Like(r.Adress, "%" + city + "%")).Select(r=>r.Adress).ToListAsync();
         }
 
-        public async void RemoveRestaurant(string adress)
+        public async Task RemoveRestaurant(string adress)
         {
             Restaurant? restaurant = await Context.Restaurants.FirstOrDefaultAsync(r => r.Adress.Equals(adress));
             if (restaurant == null)
@@ -41,7 +41,7 @@ namespace Persistence.Repository
             return restaurant;
         }
 
-        public async void EditRestaurantAuth(string adress, AuthModel authModel)
+        public async Task EditRestaurantAuth(string adress, AuthModel authModel)
         {
             Restaurant? restaurant = await Context.Restaurants.FirstOrDefaultAsync(r => r.Adress.Equals(adress));
             if (restaurant == null)

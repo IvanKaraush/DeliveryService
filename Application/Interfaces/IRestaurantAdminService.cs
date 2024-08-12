@@ -1,14 +1,17 @@
 ﻿using Domain.Models.Entities.SQLEntities;
 using Domain.Models.VievModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Domain.Stores
+namespace Application.Interfaces
 {
-    public interface IRestaurantStore
+    public interface IRestaurantAdminService
     {
         Task AddRestaurant(Restaurant restaurant);
         Task RemoveRestaurant(string adress);
-        Task<List<string>> GetRestaurantsInCityAdresses(string city);
-        Task<Restaurant> GetRestaurantByAuth(AuthModel authModel);
         Task EditRestaurantAuth(string adress, AuthModel authModel);
     }
 }
