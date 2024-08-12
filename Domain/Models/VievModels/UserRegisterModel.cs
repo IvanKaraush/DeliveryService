@@ -15,5 +15,9 @@ namespace Domain.Models.VievModels
         public string? TelegramId { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
+        public User ToUser()
+        {
+            return new User { Id =  Id, Name = Name, BirthDate = BirthDate, TelegramId = TelegramId, Login = Login, Password = Password, IsAdmin = false, Bonuses = 0 };
+        }
     }
 }

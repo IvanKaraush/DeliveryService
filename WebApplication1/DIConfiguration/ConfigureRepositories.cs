@@ -9,10 +9,10 @@ namespace API.DIConfiguration
     {
         public static void ConfigureReposes(this WebApplicationBuilder builder)
         {
-            builder.Services.AddSingleton<ISoldProductStore, SoldProductRepository>();
-            builder.Services.AddSingleton<IAuditLogStore, AuditLogRepository>();
-            builder.Services.AddSingleton<IOrderStore, OrderRepository>();
-            builder.Services.AddSingleton<IReportStore, ReportRepository>();
+            builder.Services.AddScoped<ISoldProductStore, SoldProductRepository>();
+            builder.Services.AddScoped<IAuditLogStore, AuditLogRepository>();
+            builder.Services.AddScoped<IOrderStore, OrderRepository>();
+            builder.Services.AddScoped<IReportStore, ReportRepository>();
             builder.Services.AddScoped<ICardStore, CardRepository>();
             builder.Services.AddScoped<IProductStore, ProductRepository>();
             builder.Services.AddScoped<IRestaurantStore, RestaurantRepository>();

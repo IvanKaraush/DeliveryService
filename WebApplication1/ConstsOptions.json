@@ -5,8 +5,11 @@
     "CacheExpirationMins": 5
   },
   "GoodsImagesLinkTemplate": "https://localhost:7143/files/images/goods/",
-  "TgBotToken": "hui",
-  "HostTgId": "hui",
+  "TelegramOptions": {
+    "TgBotToken": "нема тута токена",
+    "HostTgId": "а здеся нема айди",
+    "HostAuthAccesMinutes":  5
+  },
   "HostAuth": {
     "Login": "HostLogin",
     "Password": "HostPassword"

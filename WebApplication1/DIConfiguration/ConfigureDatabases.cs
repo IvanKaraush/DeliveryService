@@ -11,7 +11,7 @@ namespace API.DIConfiguration
             {
                 options.UseSqlServer(builder.Configuration.GetSection("SQLConnectionStrings").GetValue<string>("DefaultConnection")/*, sqlOptions=> sqlOptions.UseDateOnlyTimeOnly()*/);
             });
-            builder.Services.AddSingleton<IMongoContext, MongoContext>();
+            builder.Services.AddScoped<IMongoContext, MongoContext>();
             builder.Services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = builder.Configuration.GetSection("RedisConnectionOptions").GetValue<string>("Configuration");

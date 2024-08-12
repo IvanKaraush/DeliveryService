@@ -10,9 +10,9 @@ namespace Application.Interfaces
 {
     public interface IAuthService
     {
-        Task RegisterUser(User user);
+        Task RegisterUser(UserRegisterModel userRegisterModel);
         Task<Restaurant> GetRestaurantByAuth(AuthModel authModel);
-        Task<User> GetUserByAuth(AuthModel authModel);
-        Task AuthHost(AuthModel authModel);
+        Task<UserOutputModel> GetUserByAuth(AuthModel authModel);
+        void AuthHost(AuthModel authModel);
     }
 }
