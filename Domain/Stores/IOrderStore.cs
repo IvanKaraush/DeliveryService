@@ -1,6 +1,6 @@
-﻿using Domain.Models.ApplicationModels;
-using Domain.Models.Entities;
+﻿using Domain.Models.Entities;
 using Domain.Models.Entities.MongoDBEntities;
+using Domain.Models.VievModels;
 using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Collections.Generic;
@@ -18,6 +18,6 @@ namespace Domain.Stores
         Task AcceptOrder(Guid id);
         Task<Order> GetOrderById(Guid id);
         Task<List<Order>> GetOrdersByUserId(Guid id);
-        Task RemoveUnitFromList(Guid id, int article);
+        Task<DateTime> RemoveUnitFromList(Guid id, int article);
     }
 }

@@ -12,7 +12,7 @@ namespace Application.Interfaces
     {
         Task AddCard(CardModel card, Guid userId);
         Task RemoveCard(string number);
-        Task<List<Card>> UserCards(Guid userId);
+        Task<List<CardModel>> UserCards(Guid userId);
         Task<Card> GetCardByNumber(string number);
     }
 }

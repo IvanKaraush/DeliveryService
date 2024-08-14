@@ -10,8 +10,8 @@ namespace Application.Interfaces
 {
     public interface IRestaurantAdminService
     {
-        Task AddRestaurant(Restaurant restaurant);
-        Task RemoveRestaurant(string adress);
-        Task EditRestaurantAuth(string adress, AuthModel authModel);
+        Task AddRestaurant(Restaurant restaurant, Guid admin);
+        Task RemoveRestaurant(string adress, Guid admin);
+        Task EditRestaurantAuth(string adress, AuthModel authModel, Guid admin);
     }
 }

@@ -65,7 +65,7 @@ namespace Persistence.Repository
             await Context.SaveChangesAsync();
         }
 
-        public async Task RemoveProduct(int article)
+        public async Task<string?> RemoveProduct(int article)
         {
             Product? product;
             string? productString = await Cache.GetStringAsync(article.ToString());
@@ -80,6 +80,7 @@ namespace Persistence.Repository
                 throw new DoesNotExistException(typeof(Product));
             Context.Goods.Remove(product);
             await Context.SaveChangesAsync();
+            return product.ImageName;
         }
 
         public async Task Show(int article)
@@ -213,7 +214,7 @@ namespace Persistence.Repository
             return await goodsQuerry.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
-        public async Task<string?> AttachImage(string imageName, int article)
+        public async Task AttachImage(string imageName, int article)
         {
             Product? product;
             string? productString = await Cache.GetStringAsync(article.ToString());
@@ -224,14 +225,12 @@ namespace Persistence.Repository
             }
             else
                 product = await Context.Goods.FirstOrDefaultAsync(p => p.Article == article);
-            if (product == null || !product.Visible)
+            if (product == null)
                 throw new DoesNotExistException(typeof(Product));
-            string? oldImageName = product.ImageName;
             product.ImageName = imageName;
             Context.Goods.Update(product);
             await Context.SaveChangesAsync();
             await Cache.SetStringAsync(product.Article.ToString(), JsonConvert.SerializeObject(product), CacheOptions);
-            return oldImageName;
         }
 
         public async Task<string?> DetachImage(int article)
@@ -245,7 +244,7 @@ namespace Persistence.Repository
             }
             else
                 product = await Context.Goods.FirstOrDefaultAsync(p => p.Article == article);
-            if (product == null || !product.Visible)
+            if (product == null)
                 throw new DoesNotExistException(typeof(Product));
             string? oldImageName = product.ImageName;
             product.ImageName = null;

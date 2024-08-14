@@ -15,17 +15,12 @@ namespace API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Configuration.AddJsonFile("DBOptions.json");
-            builder.Configuration.AddJsonFile("ConstsOptions.json");
-            builder.Services.Configure<MongoDBOptions>(builder.Configuration.GetSection(MongoDBOptions.MongoOptions));
-            builder.Services.Configure<ReposOptions>(builder.Configuration.GetSection(ReposOptions.RepositoryOptions));
-            builder.Services.Configure<HostAuthOptions>(builder.Configuration.GetSection(HostAuthOptions.HostAuth));
-            builder.Services.Configure<TelegramAPIOptions>(builder.Configuration.GetSection(TelegramAPIOptions.TelegramOptions));
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddSingleton<ITelegramBotApi, TelegramBotAPI>();
-            builder.Services.AddHostedService<BotService>();
+            //builder.Services.AddSingleton<ITelegramBotApi, TelegramBotAPI>();
+            //builder.Services.AddHostedService<BotService>();
+            builder.ConfigureOpts();
             builder.ConfigureDBs();
             builder.ConfigureReposes();            
             var app = builder.Build();

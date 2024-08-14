@@ -6,7 +6,9 @@ namespace Domain.Models.Entities.MongoDBEntities
     {
         [BsonId]
         public DateTime Received { get; set; }
+        [BsonElement]
         public Guid UserId { get; set; }
+        [BsonElement]
         public string Message { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace Application.Interfaces
     {
         Task DeleteUser(Guid id);
         Task EditUserTelegram(Guid id, string newTelegramId);
-        Task EditUserBirthDate(Guid id, DateOnly birthDate);
+        Task AddUserBirthDate(Guid id, DateOnly birthDate);
         Task<UserOutputModel> GetUserById(Guid id);
         Task EditUserAuth(Guid id, AuthModel newAuth);
     }

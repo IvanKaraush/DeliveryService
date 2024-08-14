@@ -15,26 +15,17 @@ namespace Domain.Models.ApplicationModels
         }
         public new string Message;
     }
-    /// <summary>
-    /// Исключение для некорректного номера страницы
-    /// </summary>
     public class InvalidPageException : Exception
     {
         public string Message = "Page number is invalid or does not exist";
     }
-    /// <summary>
-    /// Исключение для неподходящего формата файла (выбрасывается, если отправлено не фото)
-    /// </summary>
+    public class InvalidMarkException : Exception
+    {
+        public string Message = "Mark can\'t be more than 5 or less than 0";
+    }
     public class InvalidFileFormatException : Exception
     {
         public string Message = "Sent file is not a picture";
-    }
-    /// <summary>
-    /// Исключение для неотправленного файла (шутки ради дал возможность пользователю отправлять пустой файл, чтобы можно было вернуть ошибку 418 - I'm a teapot)
-    /// </summary>
-    public class EmptyFileException : Exception
-    {
-        public string Message = "File was not sent";
     }
     public class WasAlreadySetException : Exception
     {
@@ -45,5 +36,9 @@ namespace Domain.Models.ApplicationModels
             Message = name + " was already set";
         }
         public string Message;
+    }
+    public class IncorrectCardNumberException : Exception
+    {
+        public string Message = "Card number is incorrect";
     }
 }

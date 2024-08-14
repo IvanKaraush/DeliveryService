@@ -7,7 +7,7 @@ namespace Domain.Stores
     {
         Task AddUser(User user);
         Task RemoveUser(Guid id);
-        Task EditUserTelegram(Guid id, string newTelegramId);
+        Task<bool> EditUserTelegram(Guid id, string newTelegramId);
         Task AddUserBirthDate(Guid id, DateOnly birthDate);
         Task DebitBonuses(Guid id, decimal amount);
         Task<User> GetUserByAuth(AuthModel authModel);

@@ -1,5 +1,4 @@
-﻿using Domain.Models.ApplicationModels;
-using Domain.Models.Entities.MongoDBEntities;
+﻿using Domain.Models.Entities.MongoDBEntities;
 using Domain.Models.VievModels;
 using System;
 using System.Collections.Generic;

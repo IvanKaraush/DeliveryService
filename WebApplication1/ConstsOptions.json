@@ -4,7 +4,10 @@
     "HotGoodsExpirationHours": 24,
     "CacheExpirationMins": 5
   },
-  "GoodsImagesLinkTemplate": "https://localhost:7143/files/images/goods/",
+  "ServicesOptions": {
+    "GoodsImagesLinkTemplate": "https://localhost:7143/files/images/goods/",
+    "GoodsImagesPath": "wwwroot\\images\\goods"
+  },
   "TelegramOptions": {
     "TgBotToken": "нема тута токена",
     "HostTgId": "а здеся нема айди",

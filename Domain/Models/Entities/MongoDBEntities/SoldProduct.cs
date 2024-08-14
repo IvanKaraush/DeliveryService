@@ -4,14 +4,16 @@ namespace Domain.Models.Entities.MongoDBEntities
 {
     public class SoldProduct
     {
-        public SoldProduct(int hours)
+        public SoldProduct(int article)
         {
-            ExpireAt = DateTime.Now.AddHours(hours);
             Id = Guid.NewGuid();
+            Article = article;
         }
         [BsonId]
         public Guid Id { get; set; }
+        [BsonElement()]
         public DateTime ExpireAt { get; set; }
+        [BsonElement]
         public int Article {  get; set; }
     }
 }

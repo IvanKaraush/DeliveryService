@@ -1,6 +1,7 @@
 ﻿using Domain.Models.ApplicationModels;
 using Domain.Models.Entities.MongoDBEntities;
 using Domain.Models.Entities.SQLEntities;
+using Domain.Models.VievModels;
 using Domain.Stores;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -52,9 +53,9 @@ namespace Persistence.Repository
             await Context.Orders.DeleteOneAsync(new BsonDocument("Id", id));
         }
 
-        public async Task RemoveUnitFromList(Guid id, int article)
+        public async Task<DateTime> RemoveUnitFromList(Guid id, int article)
         {
-            Order? order = await Context.Orders.AsQueryable().FirstOrDefaultAsync(o => o.Id == id);
+            Order? order = await Context.Orders.AsQueryable().FirstOrDefaultAsync(o => o.Id == id && o.IsCooking);
             if (order == null)
                 throw new DoesNotExistException(typeof(Order));
             var goodsList = order.GoodsList;
@@ -64,8 +65,10 @@ namespace Persistence.Repository
                 goodsList.Remove(article);
             else
                 goodsList[article]--;
+            DateTime oldTimeMarker = order.TimeMarker.Value;
             order.TimeMarker = DateTime.Now;
             await Context.Orders.ReplaceOneAsync(new BsonDocument("Id", id), order);
+            return oldTimeMarker;
         }
 
         public async Task<List<Order>> GetOrdersByUserId(Guid id)

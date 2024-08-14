@@ -12,6 +12,7 @@ namespace Application.Interfaces
     {
         Task<ProductOutputModel> GetProduct(int article);
         Task<List<ProductOutputModel>> GetVisibleGoodsList(int page, int pageSize, GoodsListOptionsModel listOptions);
-        Task<List<int>> GetHotArticleList(int goodsCount);
+        Task<List<ProductOutputModel>> GetHotGoodsList(int goodsCount);
+        Task RateProduct(int article, int mark);
     }
 }

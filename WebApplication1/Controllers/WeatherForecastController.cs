@@ -34,8 +34,7 @@ namespace API.Controllers
         [HttpPost]
         public void Hui(int a)
         {
-            SoldProduct sp = new SoldProduct(24);
-            sp.Article = a;
+            SoldProduct sp = new SoldProduct(24, a);
             Kek.AddSoldProduct(sp);
         }
     }

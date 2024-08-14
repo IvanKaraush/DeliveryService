@@ -45,7 +45,7 @@ namespace Persistence.Repository
             await Context.SaveChangesAsync();
         }
 
-        public async Task EditUserTelegram(Guid id, string newTelegramId)
+        public async Task<bool> EditUserTelegram(Guid id, string newTelegramId)
         {
             User? user;
             string? userString = await Cache.GetStringAsync(id.ToString());
@@ -58,10 +58,14 @@ namespace Persistence.Repository
                 user = await Context.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
                 throw new DoesNotExistException(typeof(User));
+            bool hadAlreadyTelegramId = false;
+            if (user.TelegramId != null)
+                hadAlreadyTelegramId = true;
             user.TelegramId = newTelegramId;
             Context.Users.Update(user);
             await Context.SaveChangesAsync();
             await Cache.SetStringAsync(user.Id.ToString(), JsonConvert.SerializeObject(user), CacheOptions);
+            return hadAlreadyTelegramId;
         }
         public async Task EditUserAuth(Guid id, AuthModel newAuth)
         {

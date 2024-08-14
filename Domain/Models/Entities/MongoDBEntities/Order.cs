@@ -1,5 +1,5 @@
-﻿using Domain.Models.ApplicationModels;
-using Domain.Models.Entities.SQLEntities;
+﻿using Domain.Models.Entities.SQLEntities;
+using Domain.Models.VievModels;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain.Models.Entities.MongoDBEntities
@@ -8,13 +8,21 @@ namespace Domain.Models.Entities.MongoDBEntities
     {
         [BsonId]
         public Guid Id { get; set; }
+        [BsonElement]
         public Guid UserId { get; set; }
+        [BsonElement]
         public string Adress { get; set; }
+        [BsonElement]
         public Coordinates Coordinates { get; set; }
-        public Dictionary<int, int> GoodsList { get; set; }//article|count
+        [BsonElement]
+        public Dictionary<int, int> GoodsList { get; set; }
+        [BsonElement]
         public bool IsCooking { get; set; }
+        [BsonElement]
         public DateTime? TimeMarker { get; set; }
-        public string? PaymentCard { get; set; }//null==NULLичные
+        [BsonElement]
+        public string? PaymentCard { get; set; }
+        [BsonElement]
         public bool AreBonusesUsing { get; set; }
     }
 }
