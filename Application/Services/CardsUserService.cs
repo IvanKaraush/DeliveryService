@@ -20,22 +20,20 @@ namespace Application.Services
         ICardStore CardStore;
         public async Task AddCard(CardModel cardModel, Guid userId)
         {
-            if (!long.TryParse(cardModel.Number, out long r))
-                throw new IncorrectCardNumberException();
             await CardStore.AddCard(cardModel.ToCard(userId));
         }
 
-        public async Task<Card> GetCardByNumber(string number)
+        public async Task<CardModel> GetCardByNumber(string number)
         {
-            if (!long.TryParse(number, out long r))
-                throw new IncorrectCardNumberException();
-            return await CardStore.GetCardByNumber(number);
+            if (!ulong.TryParse(number, out ulong r) || number.Length != 16)
+                throw new InvalidCardNumberException();
+            return new CardModel(await CardStore.GetCardByNumber(number));
         }
 
         public async Task RemoveCard(string number)
         {
-            if (!long.TryParse(number, out long r))
-                throw new IncorrectCardNumberException();
+            if (!ulong.TryParse(number, out ulong r)||number.Length!=16)
+                throw new InvalidCardNumberException();
             await CardStore.RemoveCard(number);
         }
 

@@ -14,5 +14,6 @@ namespace Application.Interfaces
         Task AcceptOrder(Guid id);
         Task<OrderModel> GetOrderById(Guid id);
         Task RemoveUnitFromList(Guid id, int article, bool wasCookedEarlier);
+        Task RemoveOrder(Guid id);
     }
 }

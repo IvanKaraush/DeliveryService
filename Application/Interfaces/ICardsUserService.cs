@@ -13,6 +13,6 @@ namespace Application.Interfaces
         Task AddCard(CardModel card, Guid userId);
         Task RemoveCard(string number);
         Task<List<CardModel>> UserCards(Guid userId);
-        Task<Card> GetCardByNumber(string number);
+        Task<CardModel> GetCardByNumber(string number);
     }
 }

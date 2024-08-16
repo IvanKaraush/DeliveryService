@@ -13,6 +13,6 @@ namespace Application.Interfaces
         Task RegisterUser(UserRegisterModel userRegisterModel);
         Task<Restaurant> GetRestaurantByAuth(AuthModel authModel);
         Task<UserOutputModel> GetUserByAuth(AuthModel authModel);
-        void AuthHost(AuthModel authModel);
+        Task AuthHost(AuthModel authModel);
     }
 }

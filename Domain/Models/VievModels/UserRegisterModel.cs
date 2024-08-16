@@ -9,7 +9,6 @@ namespace Domain.Models.VievModels
 {
     public class UserRegisterModel
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public DateOnly? BirthDate { get; set; }
         public string? TelegramId { get; set; }
@@ -17,7 +16,7 @@ namespace Domain.Models.VievModels
         public string Password { get; set; }
         public User ToUser()
         {
-            return new User { Id =  Id, Name = Name, BirthDate = BirthDate, TelegramId = TelegramId, Login = Login, Password = Password, IsAdmin = false, Bonuses = 0 };
+            return new User { Id =  Guid.NewGuid(), Name = Name, BirthDate = BirthDate, TelegramId = TelegramId, Login = Login, Password = Password, IsAdmin = false, Bonuses = 0 };
         }
     }
 }

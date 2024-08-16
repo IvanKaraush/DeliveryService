@@ -15,5 +15,6 @@ namespace Domain.Stores
         Task EditUserAuth(Guid id, AuthModel newAuth);
         Task AssignAsAdmin(Guid id);
         Task UnassignAsAdmin(Guid id);
+        Task<List<string>> GetBirthdayPeopleTelegram();
     }
 }

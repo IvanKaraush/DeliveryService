@@ -25,7 +25,10 @@ namespace Application.Services
         {
             await OrderStore.AcceptOrder(id);
         }
-
+        public async Task RemoveOrder(Guid id)
+        {
+            await OrderStore.RemoveOrder(id);
+        }
         public async Task<OrderModel> GetOrderById(Guid id)
         {
             return new OrderModel(await OrderStore.GetOrderById(id));

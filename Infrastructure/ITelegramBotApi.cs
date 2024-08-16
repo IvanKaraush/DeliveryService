@@ -8,9 +8,10 @@ namespace Infrastructure
 {
     public interface ITelegramBotApi
     {
-        Task SendCongratulationsToUsers(List<int> idList);
+        Task SendCongratulationsToUsers(List<string> idList, CancellationToken cancellationToken);
         Task SendHostAuthMessage();
         void Start(CancellationToken cancellationToken);
+        Task Stop();
         bool IsHostLogined { get; }
     }
 }

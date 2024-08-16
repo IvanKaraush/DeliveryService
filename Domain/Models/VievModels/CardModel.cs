@@ -1,4 +1,5 @@
 ﻿using Domain.Models.Entities.SQLEntities;
+using Domain.Models.ApplicationModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace Domain.Models.VievModels
 {
     public class CardModel
     {
+        public CardModel() { }
         public CardModel(Card card)
         {
             Number = card.Number;
@@ -22,6 +24,8 @@ namespace Domain.Models.VievModels
         public string Holder { get; set; }
         public Card ToCard(Guid userId)
         {
+            if (!ulong.TryParse(Number, out var number) || Number.Length != 16)
+                throw new InvalidCardNumberException();
             return new Card() { Number =  Number, CVV = CVV, Holder = Holder, Valid = Valid, UserId = userId };
         }
     }

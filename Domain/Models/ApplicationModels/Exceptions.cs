@@ -37,7 +37,7 @@ namespace Domain.Models.ApplicationModels
         }
         public string Message;
     }
-    public class IncorrectCardNumberException : Exception
+    public class InvalidCardNumberException : Exception
     {
         public string Message = "Card number is incorrect";
     }

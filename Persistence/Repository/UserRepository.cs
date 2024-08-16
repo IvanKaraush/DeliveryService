@@ -189,5 +189,10 @@ namespace Persistence.Repository
             await Context.SaveChangesAsync();
             await Cache.SetStringAsync(user.Id.ToString(), JsonConvert.SerializeObject(user), CacheOptions);
         }
+
+        public async Task<List<string>> GetBirthdayPeopleTelegram()
+        {
+            return await Context.Users.Where(u => u.TelegramId != null && u.BirthDate.HasValue && u.BirthDate.Value == DateOnly.FromDateTime(DateTime.Now)).Select(u => u.TelegramId).ToListAsync();
+        }
     }   
 }

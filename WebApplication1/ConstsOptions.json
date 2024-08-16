@@ -9,9 +9,9 @@
     "GoodsImagesPath": "wwwroot\\images\\goods"
   },
   "TelegramOptions": {
-    "TgBotToken": "нема тута токена",
-    "HostTgId": "а здеся нема айди",
-    "HostAuthAccesMinutes":  5
+    "TgBotToken": "",
+    "HostTgId": "",
+    "HostAuthAccesMinutes": 5
   },
   "HostAuth": {
     "Login": "HostLogin",

@@ -23,7 +23,7 @@ namespace Application.Services
         private readonly HostAuthOptions HostAuth;
         private readonly IUserStore UserStore;
         private readonly IRestaurantStore RestaurantStore;
-        public void AuthHost(AuthModel authModel)
+        public async Task AuthHost(AuthModel authModel)
         {
             if (HostAuth.Login != authModel.Login || HostAuth.Password != authModel.Password)
                 throw new DoesNotExistException(typeof(User));
