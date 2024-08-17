@@ -100,7 +100,10 @@ namespace Infrastructure
                     {
                         await Client.SendTextMessageAsync(new ChatId(id), "Поздравляем с днем рождения", cancellationToken: cancellationToken);
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Logger.LogWarning($"Can\'t send congratulations to ID: {id}\nMessage: {ex.Message}");
+                    }
             }
         }
         public async Task SendHostAuthMessage()
