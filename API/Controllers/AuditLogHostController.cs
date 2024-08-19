@@ -18,20 +18,20 @@ namespace API.Controllers
     {
         public AuditLogHostController(IAuditHostService auditHostService)
         {
-            AuditHostService = auditHostService;
+            _auditHostService = auditHostService;
         }
-        private readonly IAuditHostService AuditHostService;
+        private readonly IAuditHostService _auditHostService;
         [HttpGet]
-        [Route("count")]
-        public async Task<IActionResult> Count()
+        [Route("getcount")]
+        public async Task<IActionResult> GetCount()
         {
-            return Ok(await AuditHostService.GetRecordsCount());
+            return Ok(await _auditHostService.GetRecordsCount());
         }
         [HttpGet]
-        [Route("list")]
-        public async Task<IActionResult> list(int count)
+        [Route("getlist")]
+        public async Task<IActionResult> Getlist(int count)
         {
-            return Ok(await AuditHostService.GetLastRecords(count));
+            return Ok(await _auditHostService.GetLastRecords(count));
         }
     }
 }

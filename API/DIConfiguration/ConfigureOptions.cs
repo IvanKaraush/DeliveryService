@@ -2,17 +2,17 @@
 
 namespace API.DIConfiguration
 {
-    public static class ConfigureOptions
+    internal static partial class ConfigurationExtensions
     {
-        public static void ConfigureOpts(this WebApplicationBuilder builder)
+        internal static void ConfigureOptions(this WebApplicationBuilder builder)
         {
             builder.Configuration.AddJsonFile("DBOptions.json");
             builder.Configuration.AddJsonFile("ConstsOptions.json");
-            builder.Services.Configure<MongoDBOptions>(builder.Configuration.GetSection(MongoDBOptions.MongoOptions));
-            builder.Services.Configure<ReposOptions>(builder.Configuration.GetSection(ReposOptions.RepositoryOptions));
-            builder.Services.Configure<HostAuthOptions>(builder.Configuration.GetSection(HostAuthOptions.HostAuth));
-            builder.Services.Configure<TelegramAPIOptions>(builder.Configuration.GetSection(TelegramAPIOptions.TelegramOptions));
-            builder.Services.Configure<ServsOptions>(builder.Configuration.GetSection(ServsOptions.ServicesOptions));
+            builder.Services.Configure<MongoDBOptions>(builder.Configuration.GetSection(MongoDBOptions.OptionsName));
+            builder.Services.Configure<RepositoryOptions>(builder.Configuration.GetSection(RepositoryOptions.OptionsName));
+            builder.Services.Configure<HostAuthOptions>(builder.Configuration.GetSection(HostAuthOptions.OptionsName));
+            builder.Services.Configure<TelegramAPIOptions>(builder.Configuration.GetSection(TelegramAPIOptions.OptionsName));
+            builder.Services.Configure<ServicesOptions>(builder.Configuration.GetSection(ServicesOptions.OptionsName));
         }
     }
 }

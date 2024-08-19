@@ -1,11 +1,11 @@
 ﻿using Domain.Models.Entities.SQLEntities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Persistence.EntitiesOptions
+namespace Infrastructure.EntitiesOptions
 {
-    public static class GoodsOptions
+    internal static class GoodsOptions
     {
-        public static void ApplyGoodsOptions(this ModelBuilder modelBuilder)
+        internal static void ApplyGoodsOptions(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>().ToTable("Goods");
             modelBuilder.Entity<Product>().HasKey(p => p.Article);

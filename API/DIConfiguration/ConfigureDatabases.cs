@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Persistence;
+using Infrastructure;
+using Infrastructure.Interfaces;
 
 namespace API.DIConfiguration
 {
-    public static class ConfigureDatabases
+    internal static partial class ConfigurationExtensions
     {
-        public static void ConfigureDBs(this WebApplicationBuilder builder)
+        internal static void ConfigureDatabases(this WebApplicationBuilder builder)
         {
             builder.Services.AddDbContext<SQLContext>(options =>
             {

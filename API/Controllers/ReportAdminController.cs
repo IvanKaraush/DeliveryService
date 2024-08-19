@@ -13,27 +13,37 @@ namespace API.Controllers
     {
         public ReportAdminController(IReportAdminService reportAdminService)
         {
-            ReportAdminService = reportAdminService;
+            _reportAdminService = reportAdminService;
         }
-        private readonly IReportAdminService ReportAdminService;
+        private readonly IReportAdminService _reportAdminService;
+
+        [HttpGet]
+        [Route("getreport")]
+        public async Task<IActionResult> GetReport(DateTime id)
+        {
+            if (id == DateTime.MinValue)
+                return BadRequest("Arguments are null");
+            return Ok(await _reportAdminService.GetReportById(id));
+        }
+        [HttpGet]
+        [Route("getreportkeys")]
+        public async Task<IActionResult> GetReportKeys()
+        {
+            return Ok(await _reportAdminService.GetReportsIds());
+        }
         [HttpDelete]
-        [Route("close")]
-        public async Task<IActionResult> Close(DateTime id)
+        [Route("closereport")]
+        public async Task<IActionResult> CloseReport(DateTime id)
         {
-            await ReportAdminService.RemoveReport(id, Guid.Parse(HttpContext.User.FindFirst(ClaimsIdentity.DefaultNameClaimType)?.Value));
+            if (id == DateTime.MinValue)
+                return BadRequest("Arguments are null");
+            string? userGuidString = HttpContext.User.FindFirst(ClaimsIdentity.DefaultNameClaimType)?.Value;
+            if (userGuidString == null)
+                return BadRequest("User id in token not found");
+            if (!Guid.TryParse(userGuidString, out Guid userGuid))
+                return BadRequest("Invalid user id in token");
+            await _reportAdminService.RemoveReport(id, userGuid);
             return Ok();
-        }
-        [HttpGet]
-        [Route("reportkeys")]
-        public async Task<IActionResult> ReportKeys()
-        {
-            return Ok(await ReportAdminService.GetReportsIds());
-        }
-        [HttpGet]
-        [Route("report")]
-        public async Task<IActionResult> Report(DateTime id)
-        {
-            return Ok(await ReportAdminService.GetReportById(id));
         }
     }
 }

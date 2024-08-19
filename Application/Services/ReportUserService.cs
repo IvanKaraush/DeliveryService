@@ -14,12 +14,12 @@ namespace Application.Services
     {
         public ReportUserService(IReportStore reportStore)
         {
-            ReportStore = reportStore;
+            _reportStore = reportStore;
         }
-        private readonly IReportStore ReportStore;
+        private readonly IReportStore _reportStore;
         public async Task AddReport(string message, Guid userId)
         {
-            await ReportStore.AddReport(new Report() { Message = message, UserId = userId, Received = DateTime.Now});
+            await _reportStore.AddReport(new Report() { Message = message, UserId = userId, Received = DateTime.Now});
         }
     }
 }

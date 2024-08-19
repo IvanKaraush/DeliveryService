@@ -5,18 +5,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
+using Domain.Models.ApplicationModels.Exceptions;
 
 namespace Domain.Models.VievModels
 {
     public class CardModel
     {
-        public CardModel() { }
         public CardModel(Card card)
         {
             Number = card.Number;
             CVV = card.CVV;
             Valid = card.Valid;
             Holder = card.Holder;
+        }
+        [JsonConstructor]
+        public CardModel(string number, short cVV, DateOnly valid, string holder)
+        {
+            Number = number;
+            CVV = cVV;
+            Valid = valid;
+            Holder = holder;
         }
         public string Number { get; set; }
         public short CVV { get; set; }

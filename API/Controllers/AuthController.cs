@@ -4,7 +4,7 @@ using Domain.Models.Entities.MongoDBEntities;
 using Domain.Models.Entities.SQLEntities;
 using Domain.Models.VievModels;
 using Domain.Stores;
-using Infrastructure;
+using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Tokens;
@@ -23,28 +23,24 @@ namespace API.Controllers
     {
         public AuthController(IAuthService authService, ITelegramBotApi telegramBotApi)
         {
-            AuthService = authService;
-            TelegramBotApi = telegramBotApi;
+            _authService = authService;
+            _telegramBotApi = telegramBotApi;
         }
-        private readonly IAuthService AuthService;
-        private readonly ITelegramBotApi TelegramBotApi;
-        [Route("register")]
-        [HttpPost]
-        public async Task<IActionResult> RegisterUser(UserRegisterModel userRegisterModel)
-        {
-            await AuthService.RegisterUser(userRegisterModel);
-            return Ok();
-        }
+        private readonly IAuthService _authService;
+        private readonly ITelegramBotApi _telegramBotApi;        
         [Route("host")]
         [HttpPost]
         public async Task<IActionResult> AuthHost(AuthModel authModel)
         {
-            if (!TelegramBotApi.IsHostLogined)
+            if (authModel == null)
+                return BadRequest("Arguments are null");
+            if (!_telegramBotApi.IsHostLogined)
             {
-                await TelegramBotApi.SendHostAuthMessage();
+                await _telegramBotApi.SendHostAuthMessage();
                 return Unauthorized(); 
             }
-            await AuthService.AuthHost(authModel);
+            if(!await _authService.AuthHost(authModel))
+                return BadRequest("Incorrect login and/or password");
             string role = "HostRole";
             DateTime utcNow = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
@@ -61,7 +57,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> AuthRestaurant(AuthModel authModel)
         {
-            Restaurant restaurant = await AuthService.GetRestaurantByAuth(authModel);
+            if (authModel == null)
+                return BadRequest("Arguments are null");
+            Restaurant restaurant = await _authService.GetRestaurantByAuth(authModel);
             string role = "RestaurantRole";
             DateTime utcNow = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
@@ -78,7 +76,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> AuthUser(AuthModel authModel)
         {
-            UserOutputModel user = await AuthService.GetUserByAuth(authModel);
+            if (authModel == null)
+                return BadRequest("Arguments are null");
+            UserOutputModel user = await _authService.GetUserByAuth(authModel);
             string role = "UserRole";
             if (user.IsAdmin)
             {
@@ -94,6 +94,15 @@ namespace API.Controllers
                     signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
             return Ok(encodedJwt);
+        }
+        [Route("register")]
+        [HttpPost]
+        public async Task<IActionResult> RegisterUser(UserRegisterModel userRegisterModel)
+        {
+            if (userRegisterModel == null)
+                return BadRequest("Arguments are null");
+            await _authService.RegisterUser(userRegisterModel);
+            return Ok();
         }
         private ClaimsIdentity GetIdentity(string id, string role)
         {

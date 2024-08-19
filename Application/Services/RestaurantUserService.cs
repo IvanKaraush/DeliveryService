@@ -12,12 +12,12 @@ namespace Application.Services
     {
         public RestaurantUserService(IRestaurantStore restaurantStore) 
         {
-            RestaurantStore = restaurantStore;
+            _restaurantStore = restaurantStore;
         }
-        private readonly IRestaurantStore RestaurantStore;
+        private readonly IRestaurantStore _restaurantStore;
         public async Task<List<string>> GetRestaurantsInCityAdresses(string city)
         {
-            return await RestaurantStore.GetRestaurantsInCityAdresses(city);
+            return await _restaurantStore.GetRestaurantsInCityAdresses(city);
         }
     }
 }

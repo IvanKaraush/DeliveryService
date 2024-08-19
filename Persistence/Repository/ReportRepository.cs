@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Persistence.Exceptions;
+using Infrastructure.Interfaces;
 
 namespace Persistence.Repository
 {
@@ -16,18 +18,13 @@ namespace Persistence.Repository
     {
         public ReportRepository(IMongoContext context) 
         {
-            Context = context;
+            _context = context;
         }
-        private readonly IMongoContext Context;
-        public async Task AddReport(Report report)
-        {
-            report.Received = DateTime.Now;
-            await Context.Reports.InsertOneAsync(report);
-        }
+        private readonly IMongoContext _context;
 
         public async Task<Report> GetReportById(DateTime id)
         {
-            Report? report = await Context.Reports.Find(new BsonDocument("Received", id)).FirstOrDefaultAsync();
+            Report? report = await _context.Reports.Find(new BsonDocument("Received", id)).FirstOrDefaultAsync();
             if (report == null)
                 throw new DoesNotExistException(typeof(Report));
             return report;
@@ -35,12 +32,18 @@ namespace Persistence.Repository
 
         public async Task<List<DateTime>> GetReportsIds()
         {
-            return await Context.Reports.AsQueryable().Select(r => r.Received).ToListAsync();
+            return await _context.Reports.AsQueryable().Select(r => r.Received).ToListAsync();
+        }
+
+        public async Task AddReport(Report report)
+        {
+            report.Received = DateTime.Now;
+            await _context.Reports.InsertOneAsync(report);
         }
 
         public async Task RemoveReport(DateTime id)
         {
-            await Context.Reports.DeleteOneAsync(new BsonDocument("Received", id));
+            await _context.Reports.DeleteOneAsync(new BsonDocument("Received", id));
         }
     }
 }

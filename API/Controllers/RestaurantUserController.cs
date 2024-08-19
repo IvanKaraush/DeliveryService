@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Application.Services;
+using Domain.Models.Entities.SQLEntities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,14 +12,16 @@ namespace API.Controllers
     {
         public RestaurantUserController(IRestaurantUserService restaurantUserService)
         {
-            RestaurantUserService = restaurantUserService;
+            _restaurantUserService = restaurantUserService;
         }
-        private readonly IRestaurantUserService RestaurantUserService;
+        private readonly IRestaurantUserService _restaurantUserService;
         [HttpGet]
-        [Route("restaurants")]
-        public async Task<IActionResult> Restaurants(string city)
+        [Route("getrestaurants")]
+        public async Task<IActionResult> GetRestaurants(string city)
         {
-            return Ok(RestaurantUserService.GetRestaurantsInCityAdresses(city));
+            if (city == null)
+                return BadRequest("Arguments are null");
+            return Ok(await _restaurantUserService.GetRestaurantsInCityAdresses(city));
         }
     }
 }

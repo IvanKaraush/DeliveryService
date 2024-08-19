@@ -13,17 +13,17 @@ namespace Application.Services
     {
         public AuditHostService(IAuditLogStore auditLogStore)
         {
-            AuditLogStore = auditLogStore;
+            _auditLogStore = auditLogStore;
         }
-        IAuditLogStore AuditLogStore;
+        IAuditLogStore _auditLogStore;
         public async Task<List<AuditLogRecord>> GetLastRecords(int count)
         {
-            return await AuditLogStore.GetLastRecords(count);
+            return await _auditLogStore.GetLastRecords(count);
         }
 
         public async Task<int> GetRecordsCount()
         {
-            return await AuditLogStore.GetRecordsCount();
+            return await _auditLogStore.GetRecordsCount();
         }
     }
 }

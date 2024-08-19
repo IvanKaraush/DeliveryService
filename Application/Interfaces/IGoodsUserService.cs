@@ -10,9 +10,9 @@ namespace Application.Interfaces
 {
     public interface IGoodsUserService
     {
-        Task<ProductOutputModel> GetProduct(int article);
-        Task<List<ProductOutputModel>> GetVisibleGoodsList(int page, int pageSize, GoodsListOptionsModel listOptions);
-        Task<List<ProductOutputModel>> GetHotGoodsList(int goodsCount);
-        Task RateProduct(int article, int mark);
+        public Task<ProductOutputModel> GetProduct(int article);
+        public Task<List<ProductOutputModel>> GetVisibleGoodsList(int page, int pageSize, GoodsListOptionsModel listOptions);
+        public Task<List<ProductOutputModel>> GetHotGoodsList(int goodsCount);
+        public Task RateProduct(int article, int mark);
     }
 }

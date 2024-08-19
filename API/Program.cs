@@ -13,13 +13,14 @@ using Persistence.Repository;
 using Telegram.Bot;
 namespace API
 {
+
     public class Program
     {
         public static void Main(string[] args)
         {
             CreateDirectories();
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddImageResizeMW();
+            builder.Services.AddMemoryCache();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
@@ -48,10 +49,10 @@ namespace API
                     }
                 });
             });
-            builder.ConfigureOpts();
-            builder.ConfigureDBs();
-            builder.ConfigureReposes();
-            builder.ConfigureServs();
+            builder.ConfigureOptions();
+            builder.ConfigureDatabases();
+            builder.ConfigureRepositories();
+            builder.ConfigureServices();
             builder.Services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireUserRole", policy => policy.RequireRole("UserRole", "AdminRole"));
@@ -85,12 +86,12 @@ namespace API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseResizeMiddleware();
+            app.UseMiddleware<ResizeMiddleware>();
             app.UseStaticFiles(new StaticFileOptions()
             {
                 RequestPath = "/files"
             });
-            app.UseExceptionHandlerMiddleware();
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
             app.UseHttpsRedirection();
 
 
@@ -103,7 +104,7 @@ namespace API
             string[] paths = "wwwroot\\images\\goods".Split("\\");
             for (int i = 1; i < paths.Length; i++)
             {
-                paths[i] = paths[i - 1] + "\\" + paths[i];
+                paths[i] = $"{paths[i - 1]}\\{paths[i]}";
             }
             foreach (string path in paths)
             {

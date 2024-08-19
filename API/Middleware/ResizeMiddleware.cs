@@ -7,7 +7,7 @@ using SkiaSharp;
 
 namespace API.Middleware
 {
-    public class ResizeMiddleware
+    internal class ResizeMiddleware
     {
         struct ResizeParams
         {
@@ -38,6 +38,8 @@ namespace API.Middleware
                 return stringBuilder.ToString();
             }
         }
+
+        [Obsolete]
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _environment;
         private readonly IMemoryCache _memoryCache;
         private readonly RequestDelegate _next;
@@ -46,6 +48,8 @@ namespace API.Middleware
             "jpg",
             "jpeg"
         };
+
+        [Obsolete]
         public ResizeMiddleware(RequestDelegate next, Microsoft.AspNetCore.Hosting.IHostingEnvironment environment, IMemoryCache memoryCache)
         {
             _next = next;
@@ -59,6 +63,8 @@ namespace API.Middleware
 
             return _suffixes.Any(x => x.EndsWith(x, StringComparison.OrdinalIgnoreCase));
         }
+
+        [Obsolete]
         public async Task Invoke(HttpContext context)
         {
             PathString path = context.Request.Path;
@@ -76,10 +82,11 @@ namespace API.Middleware
                 await _next.Invoke(context);
                 return;
             }
-
+            if (path.Value == null)
+                throw new Exception("Request path is null");
             string imagePath = Path.Combine(
-       _environment.WebRootPath,
-       path.Value.Substring(5).Replace('/', Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar));
+                _environment.WebRootPath,
+                path.Value.Substring(5).Replace('/', Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar));
 
             // check file lastwrite
             DateTime lastWriteTimeUtc = File.GetLastWriteTimeUtc(imagePath);
@@ -115,8 +122,12 @@ namespace API.Middleware
 
             // extract resize params
 
+            if (path.Value == null)
+                throw new Exception("Request path is null");
             if (query.ContainsKey("format"))
+#pragma warning disable CS8601 // Возможно, назначение-ссылка, допускающее значение NULL.
                 resizeParams.Format = query["format"];
+#pragma warning restore CS8601 // Возможно, назначение-ссылка, допускающее значение NULL.
             else
                 resizeParams.Format = path.Value.Substring(path.Value.LastIndexOf('.') + 1);
 
@@ -141,10 +152,14 @@ namespace API.Middleware
             resizeParams.Mode = "max";
             // only apply mode if it's a valid mode and both w and h are specified
             if (h != 0 && w != 0 && query.ContainsKey("mode") && ResizeParams.Modes.Any(m => query["mode"] == m))
+#pragma warning disable CS8601 // Возможно, назначение-ссылка, допускающее значение NULL.
                 resizeParams.Mode = query["mode"];
+#pragma warning restore CS8601 // Возможно, назначение-ссылка, допускающее значение NULL.
 
             return resizeParams;
         }
+
+        [Obsolete]
         private SKData GetImageData(string imagePath, ResizeParams resizeParams, DateTime lastWriteTimeUtc)
         {
             // check cache and return if cached
@@ -155,8 +170,8 @@ namespace API.Middleware
             }
 
             SKData imageData;
-            byte[] imageBytes;
-            bool isCached = _memoryCache.TryGetValue<byte[]>(cacheKey, out imageBytes);
+            byte[]? imageBytes;
+            bool isCached = _memoryCache.TryGetValue(cacheKey, out imageBytes);
             if (isCached)
             {
                 return SKData.CreateCopy(imageBytes);
@@ -280,7 +295,7 @@ namespace API.Middleware
         private SKBitmap RotateAndFlip(SKBitmap original, SKEncodedOrigin origin)
         {
             // these are the origins that represent a 90 degree turn in some fashion
-            SKEncodedOrigin[] differentOrientations = 
+            SKEncodedOrigin[] differentOrientations =
             {
                 SKEncodedOrigin.LeftBottom,
                 SKEncodedOrigin.LeftTop,
@@ -378,17 +393,6 @@ namespace API.Middleware
                     }
                 }
             }
-        }
-    }
-    public static class ResizeMiddlewareExtensions
-    {
-        public static void UseResizeMiddleware(this IApplicationBuilder app)
-        {
-            app.UseMiddleware<ResizeMiddleware>();
-        }
-        public static void AddImageResizeMW(this IServiceCollection services)
-        {
-            services.AddMemoryCache();
         }
     }
 }

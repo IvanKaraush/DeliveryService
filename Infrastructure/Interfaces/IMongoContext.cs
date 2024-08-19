@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Persistence
+namespace Infrastructure.Interfaces
 {
     public interface IMongoContext
     {

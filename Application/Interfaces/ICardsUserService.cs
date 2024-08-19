@@ -10,9 +10,9 @@ namespace Application.Interfaces
 {
     public interface ICardsUserService
     {
-        Task AddCard(CardModel card, Guid userId);
-        Task RemoveCard(string number);
-        Task<List<CardModel>> UserCards(Guid userId);
-        Task<CardModel> GetCardByNumber(string number);
+        public Task<CardModel> GetCardByNumber(string number);
+        public Task<List<CardModel>> GetUserCards(Guid userId);
+        public Task AddCard(CardModel card, Guid userId);
+        public Task RemoveCard(string number);
     }
 }

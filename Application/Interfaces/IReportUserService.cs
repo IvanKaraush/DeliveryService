@@ -10,6 +10,6 @@ namespace Application.Interfaces
 {
     public interface IReportUserService
     {
-        Task AddReport(string message, Guid userId);
+        public Task AddReport(string message, Guid userId);
     }
 }

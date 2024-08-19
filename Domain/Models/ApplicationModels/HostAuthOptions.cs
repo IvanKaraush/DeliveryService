@@ -8,8 +8,8 @@ namespace Domain.Models.ApplicationModels
 {
     public class HostAuthOptions
     {
-        public static string HostAuth = "HostAuth";
-        public string Login { get; set; }
-        public string Password { get; set; }
+        public const string OptionsName = "HostAuth";
+        public required string Login { get; set; }
+        public required string Password { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using Domain.Models.VievModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace API.Controllers
 {
@@ -13,41 +14,52 @@ namespace API.Controllers
     {
         public OrderRestaurantController(IOrderRestaurantService orderRestaurantService) 
         {
-            OrderRestaurantService = orderRestaurantService;
+            _orderRestaurantService = orderRestaurantService;
         }
-        private readonly IOrderRestaurantService OrderRestaurantService;
-        [HttpPost]
-        [Route("list")]
-        public async Task<IActionResult> List(int count, Coordinates restaurantCoordinates)
+        private readonly IOrderRestaurantService _orderRestaurantService;
+
+        [HttpGet]
+        [Route("getorder")]
+        public async Task<IActionResult> GetOrder(Guid id)
         {
-            return Ok(await OrderRestaurantService.GetOrdersList(count, restaurantCoordinates));
+            if (id == Guid.Empty)
+                return BadRequest("Arguments are null");
+            await _orderRestaurantService.GetOrderById(id);
+            return Ok();
+        }
+        [HttpPost]
+        [Route("getlist")]
+        public async Task<IActionResult> GetList(int count, Coordinates restaurantCoordinates)
+        {
+            if (restaurantCoordinates == null)
+                return BadRequest("Arguments are null");
+            return Ok(await _orderRestaurantService.GetOrdersList(count, restaurantCoordinates));
         }
         [HttpPatch]
         [Route("accept")]
         public async Task<IActionResult> Accept(Guid id)
         {
-            await OrderRestaurantService.AcceptOrder(id);
-            return Ok();
-        }
-        [HttpGet]
-        [Route("getorder")]
-        public async Task<IActionResult> Order(Guid id)
-        {
-            await OrderRestaurantService.GetOrderById(id);
+            if (id == Guid.Empty)
+                return BadRequest("Arguments are null");
+            await _orderRestaurantService.AcceptOrder(id);
             return Ok();
         }
         [HttpPatch]
         [Route("markascooked")]
         public async Task<IActionResult> MarkAsCooked(Guid id, int article, bool wasCookedEarlier)
         {
-            await OrderRestaurantService.RemoveUnitFromList(id, article, wasCookedEarlier);
+            if (id == Guid.Empty)
+                return BadRequest("Arguments are null");
+            await _orderRestaurantService.RemoveUnitFromList(id, article, wasCookedEarlier);
             return Ok();
         }
         [HttpDelete]
         [Route("closeorder")]
         public async Task<IActionResult> CloseOrder(Guid id)
         {
-            await OrderRestaurantService.RemoveOrder(id);
+            if (id == Guid.Empty)
+                return BadRequest("Arguments are null");
+            await _orderRestaurantService.RemoveOrder(id);
             return Ok();
         }
     }

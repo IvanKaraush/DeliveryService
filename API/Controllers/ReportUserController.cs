@@ -12,15 +12,20 @@ namespace API.Controllers
     {
         public ReportUserController(IReportUserService reportUserService) 
         {
-            ReportUserService = reportUserService;
+            _reportUserService = reportUserService;
         }
-        private readonly IReportUserService ReportUserService;
+        private readonly IReportUserService _reportUserService;
         [HttpPost]
         [Route("leavereport")]
         [Authorize("RequireUserRole")]
         public async Task<IActionResult> LeaveReport(string message)
         {
-            await ReportUserService.AddReport(message, Guid.Parse(HttpContext.User.FindFirst(ClaimsIdentity.DefaultNameClaimType)?.Value));
+            string? userGuidString = HttpContext.User.FindFirst(ClaimsIdentity.DefaultNameClaimType)?.Value;
+            if (userGuidString == null)
+                return BadRequest("User id in token not found");
+            if (!Guid.TryParse(userGuidString, out Guid userGuid))
+                return BadRequest("Invalid user id in token");
+            await _reportUserService.AddReport(message, userGuid);
             return Ok();
         }
     }

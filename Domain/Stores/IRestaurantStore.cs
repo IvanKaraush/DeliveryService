@@ -5,10 +5,10 @@ namespace Domain.Stores
 {
     public interface IRestaurantStore
     {
-        Task AddRestaurant(Restaurant restaurant);
-        Task RemoveRestaurant(string adress);
-        Task<List<string>> GetRestaurantsInCityAdresses(string city);
-        Task<Restaurant> GetRestaurantByAuth(AuthModel authModel);
-        Task EditRestaurantAuth(string adress, AuthModel authModel);
+        public Task<Restaurant> GetRestaurantByAuth(AuthModel authModel);
+        public Task<List<string>> GetRestaurantsInCityAdresses(string city);
+        public Task AddRestaurant(Restaurant restaurant);
+        public Task RemoveRestaurant(string adress);
+        public Task EditRestaurantAuth(string adress, AuthModel authModel);
     }
 }

@@ -6,6 +6,7 @@ namespace Domain.Models.VievModels
     {
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public Coordinates() { }
         public Coordinates(Restaurant restaurant)
         {
             Latitude = restaurant.Latitude; ;

@@ -6,7 +6,9 @@
   },
   "ServicesOptions": {
     "GoodsImagesLinkTemplate": "https://localhost:7143/files/images/goods/",
-    "GoodsImagesPath": "wwwroot\\images\\goods"
+    "GoodsImagesPath": "wwwroot\\images\\goods",
+    "BonusesForTelegram": 10,
+    "BonusesForBirthdate": 10
   },
   "TelegramOptions": {
     "TgBotToken": "",

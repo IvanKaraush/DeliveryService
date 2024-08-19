@@ -10,6 +10,6 @@ namespace Application.Interfaces
 {
     public interface IRestaurantUserService
     {
-        Task<List<string>> GetRestaurantsInCityAdresses(string city);
+        public Task<List<string>> GetRestaurantsInCityAdresses(string city);
     }
 }

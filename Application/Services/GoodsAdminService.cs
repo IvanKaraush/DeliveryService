@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Exceptions;
+using Application.Interfaces;
 using Domain.Models.ApplicationModels;
 using Domain.Models.Entities.MongoDBEntities;
 using Domain.Models.Entities.SQLEntities;
@@ -16,88 +17,87 @@ namespace Application.Services
 {
     public class GoodsAdminService : IGoodsAdminService
     {
-        public GoodsAdminService(IProductStore productStore, IAuditLogStore auditLogStore, IOptions<ServsOptions> options) 
+        public GoodsAdminService(IProductStore productStore, IAuditLogStore auditLogStore, IOptions<ServicesOptions> options) 
         {
-            ProductStore = productStore;
-            ImageDirectory = Directory.GetCurrentDirectory() + "\\" + options.Value.GoodsImagesPath;
-            AuditLogStore = auditLogStore;
-            Link = options.Value.GoodsImagesLinkTemplate;
+            _productStore = productStore;
+            _imageDirectory = Directory.GetCurrentDirectory() + "\\" + options.Value.GoodsImagesPath;
+            _auditLogStore = auditLogStore;
+            _link = options.Value.GoodsImagesLinkTemplate;
         }
-        private readonly IAuditLogStore AuditLogStore;
-        private readonly IProductStore ProductStore;
-        private readonly string Link;
-        private readonly string ImageDirectory;
+        private readonly IAuditLogStore _auditLogStore;
+        private readonly IProductStore _productStore;
+        private readonly string _link;
+        private readonly string _imageDirectory;
+        public async Task<List<ProductOutputModel>> GetInvisibleGoodsList(int page, int pageSize, string? textInTitle)
+        {
+            List<Product> productList = await _productStore.GetInvisibleGoodsList(page, pageSize, textInTitle);
+            List<ProductOutputModel> pOMList = new List<ProductOutputModel>();
+            foreach (Product product in productList)
+            {
+                pOMList.Add(new ProductOutputModel(product, _link));
+            }
+            return pOMList;
+        }
         public async Task AddProduct(ProductInputModel productInputModel, Guid admin)
         {
-            await ProductStore.AddProduct(productInputModel.ToProduct());
-            await AuditLogStore.AddRecord(new AuditLogRecord(admin, "Добавлен артикул " + productInputModel.Article));
+            await _productStore.AddProduct(productInputModel.ToProduct());
+            await _auditLogStore.AddRecord(new AuditLogRecord(admin, $"{AuditLogExpressions.ARTICLE_ADDED}{productInputModel.Article}"));
         }
 
         public async Task AttachImage(IFormFile file, int article, Guid admin)
         {
             if (!file.ContentType.Contains("image"))
                 throw new InvalidFileFormatException();
-            Product product = await ProductStore.GetProduct(article);
+            Product product = await _productStore.GetProduct(article);
             if (product.ImageName != null)
             {
-                File.Delete(ImageDirectory + "\\" + product.ImageName);
-                await AuditLogStore.AddRecord(new AuditLogRecord(admin, "Удалено изображение у артикула " + article));
+                File.Delete(_imageDirectory + "\\" + product.ImageName);
+                await _auditLogStore.AddRecord(new AuditLogRecord(admin, $"{AuditLogExpressions.IMAGE_REMOVED}{article}"));
             }
-            using (FileStream fS = new FileStream(ImageDirectory + "\\" + file.FileName, FileMode.Create))
+            using (FileStream fS = new FileStream(_imageDirectory + "\\" + file.FileName, FileMode.Create))
             {
                 await file.CopyToAsync(fS);
             }
-            await ProductStore.AttachImage(file.FileName, article);
-            await AuditLogStore.AddRecord(new AuditLogRecord(admin, "Добавлено изображение к артикулу " + article));
+            await _productStore.AttachImage(file.FileName, article);
+            await _auditLogStore.AddRecord(new AuditLogRecord(admin, $"{AuditLogExpressions.IMAGE_ADDED}{article}"));
         }
 
         public async Task DetachImage(int article, Guid admin)
         {
-            string? imgName = await ProductStore.DetachImage(article);
+            string? imgName = await _productStore.DetachImage(article);
             if (imgName != null) 
             {
-                File.Delete(ImageDirectory + "\\" + imgName);
+                File.Delete(_imageDirectory + "\\" + imgName);
             }
-            await AuditLogStore.AddRecord(new AuditLogRecord(admin, "Удалено изображение у артикула " + article));
+            await _auditLogStore.AddRecord(new AuditLogRecord(admin, $"{AuditLogExpressions.IMAGE_REMOVED}{article}"));
         }
 
         public async Task EditPrice(int article, decimal price, Guid admin)
         {
-            await ProductStore.EditPrice(article, price);
-            await AuditLogStore.AddRecord(new AuditLogRecord(admin, "Изменена цена у артикула " + article));
+            await _productStore.EditPrice(article, price);
+            await _auditLogStore.AddRecord(new AuditLogRecord(admin, $"{AuditLogExpressions.PRICE_CHANGED}{article}"));
         }
 
-        public async Task<List<ProductOutputModel>> GetInvisibleGoodsList(int page, int pageSize, string? textInTitle)
+        public async Task HideProduct(int article, Guid admin)
         {
-            List<Product> productList = await ProductStore.GetInvisibleGoodsList(page, pageSize, textInTitle);
-            List<ProductOutputModel> pOMList = new List<ProductOutputModel>();
-            foreach (Product product in productList)
-            {
-                pOMList.Add(new ProductOutputModel(product, Link));
-            }
-            return pOMList;
-        }
-
-        public async Task Hide(int article, Guid admin)
-        {
-            await ProductStore.Hide(article);
-            await AuditLogStore.AddRecord(new AuditLogRecord(admin, "Скрыт артикул " + article));
+            await _productStore.Hide(article);
+            await _auditLogStore.AddRecord(new AuditLogRecord(admin, $"{AuditLogExpressions.ARTICLE_HIDDEN}{article}"));
         }
 
         public async Task RemoveProduct(int article, Guid admin)
         {
-            string? imgName = await ProductStore.RemoveProduct(article);
+            string? imgName = await _productStore.RemoveProduct(article);
             if (imgName != null)
             {
-                File.Delete(ImageDirectory + "\\" + imgName);
+                File.Delete($"{_imageDirectory}\\{imgName}");
             }
-            await AuditLogStore.AddRecord(new AuditLogRecord(admin, "Удален артикул " + article));
+            await _auditLogStore.AddRecord(new AuditLogRecord(admin, $"{AuditLogExpressions.ARTICLE_REMOVED}{article}"));
         }
 
-        public async Task Show(int article, Guid admin)
+        public async Task ShowProduct(int article, Guid admin)
         {
-            await ProductStore.Show(article);
-            await AuditLogStore.AddRecord(new AuditLogRecord(admin, "Показан артикул " + article));
+            await _productStore.Show(article);
+            await _auditLogStore.AddRecord(new AuditLogRecord(admin, $"{AuditLogExpressions.ARTICLE_SHOWN}{article}"));
         }
     }
 }

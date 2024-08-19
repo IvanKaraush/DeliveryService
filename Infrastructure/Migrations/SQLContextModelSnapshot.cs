@@ -8,7 +8,7 @@ using Persistence;
 
 #nullable disable
 
-namespace Persistence.Migrations
+namespace Infrastructure.Migrations
 {
     [DbContext(typeof(SQLContext))]
     partial class SQLContextModelSnapshot : ModelSnapshot

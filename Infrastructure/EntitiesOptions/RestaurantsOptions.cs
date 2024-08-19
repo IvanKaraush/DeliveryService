@@ -1,11 +1,11 @@
 ﻿using Domain.Models.Entities.SQLEntities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Persistence.EntitiesOptions
+namespace Infrastructure.EntitiesOptions
 {
-    public static class RestaurantsOptions
+    internal static class RestaurantsOptions
     {
-        public static void ApplyRestaurantsOptions(this ModelBuilder modelBuilder)
+        internal static void ApplyRestaurantsOptions(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Restaurant>().ToTable("Restaurants");
             modelBuilder.Entity<Restaurant>().HasKey(r => r.Adress);

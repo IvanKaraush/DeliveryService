@@ -12,12 +12,12 @@ namespace Domain.Stores
 {
     public interface IOrderStore
     {
-        Task AddOrder(Order order);
-        Task RemoveOrder(Guid id);
-        Task<List<Order>> GetOrdersList(int count, Coordinates restaurantCoordinates);
-        Task AcceptOrder(Guid id);
-        Task<Order> GetOrderById(Guid id);
-        Task<List<Order>> GetOrdersByUserId(Guid id);
-        Task<DateTime> RemoveUnitFromList(Guid id, int article);
+        public Task<Order> GetOrderById(Guid id);
+        public Task<List<Order>> GetOrdersByUserId(Guid id);
+        public Task<List<Order>> GetOrdersList(int count, Coordinates restaurantCoordinates);
+        public Task AddOrder(Order order);
+        public Task RemoveOrder(Guid id);
+        public Task AcceptOrder(Guid id);
+        public Task<DateTime> RemoveUnitFromList(Guid id, int article);
     }
 }

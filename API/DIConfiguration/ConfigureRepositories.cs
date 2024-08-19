@@ -5,9 +5,9 @@ using Persistence.Repository;
 
 namespace API.DIConfiguration
 {
-    public static class ConfigureRepositories
+    internal static partial class ConfigurationExtensions
     {
-        public static void ConfigureReposes(this WebApplicationBuilder builder)
+        internal static void ConfigureRepositories(this WebApplicationBuilder builder)
         {
             builder.Services.AddScoped<ISoldProductStore, SoldProductRepository>();
             builder.Services.AddScoped<IAuditLogStore, AuditLogRepository>();

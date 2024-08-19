@@ -16,38 +16,36 @@ namespace Application.Services
     {
         public OrderUserService(IOrderStore orderStore, IUserStore userStore, ICardStore cardStore) 
         {
-            OrderStore = orderStore;
-            UserStore = userStore;
-            CardStore = cardStore;
+            _orderStore = orderStore;
+            _userStore = userStore;
+            _cardStore = cardStore;
         }
-        private readonly IOrderStore OrderStore;
-        private readonly IUserStore UserStore;
-        private readonly ICardStore CardStore;
-        public async Task AddOrder(OrderModel order)
-        {
-            User user = await UserStore.GetUserById(order.UserId);
-            if ((await CardStore.UserCards(user.Id)).Where(c=>c.Number == order.PaymentCard).Count()==0)
-                throw new InvalidCardNumberException();
-            await OrderStore.AddOrder(order.ToOrder());
-        }
-
+        private readonly IOrderStore _orderStore;
+        private readonly IUserStore _userStore;
+        private readonly ICardStore _cardStore;
         public async Task<OrderModel> GetOrderById(Guid id)
         {
-            return new OrderModel(await OrderStore.GetOrderById(id));
+            return new OrderModel(await _orderStore.GetOrderById(id));
         }
-
         public async Task<List<OrderModel>> GetOrdersByUserId(Guid id)
         {
             List<OrderModel> orderModels = new List<OrderModel>();
-            List<Order> orders = await OrderStore.GetOrdersByUserId(id);
+            List<Order> orders = await _orderStore.GetOrdersByUserId(id);
             foreach (Order order in orders)
                 orderModels.Add(new OrderModel(order));
             return orderModels;
         }
+        public async Task AddOrder(OrderModel order)
+        {
+            User user = await _userStore.GetUserById(order.UserId);
+            if ((await _cardStore.GetUserCards(user.Id)).Where(c=>c.Number == order.PaymentCard).Count()==0)
+                throw new InvalidCardNumberException();
+            await _orderStore.AddOrder(order.ToOrder());
+        }
 
         public async Task RemoveOrder(Guid id)
         {
-            await OrderStore.RemoveOrder(id);
+            await _orderStore.RemoveOrder(id);
         }
     }
 }

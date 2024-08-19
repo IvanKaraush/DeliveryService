@@ -15,27 +15,27 @@ namespace Application.Services
     {
         public RestaurantAdminService(IRestaurantStore restaurantStore,IAuditLogStore auditLogStore) 
         {
-            RestaurantStore = restaurantStore;
-            AuditLogStore = auditLogStore;
+            _restaurantStore = restaurantStore;
+            _auditLogStore = auditLogStore;
         }
-        private readonly IRestaurantStore RestaurantStore;
-        private readonly IAuditLogStore AuditLogStore;
-        public async Task AddRestaurant(Restaurant restaurant, Guid admin)
-        {
-            await RestaurantStore.AddRestaurant(restaurant);
-            await AuditLogStore.AddRecord(new AuditLogRecord(admin, "Добавлен ресторан по адресу: " + restaurant.Adress));
-        }
+        private readonly IRestaurantStore _restaurantStore;
+        private readonly IAuditLogStore _auditLogStore;
 
         public async Task EditRestaurantAuth(string adress, AuthModel authModel, Guid admin)
         {
-            await RestaurantStore.EditRestaurantAuth(adress, authModel);
-            await AuditLogStore.AddRecord(new AuditLogRecord(admin, "Изменены логин и/или пароль ресторана по адресу: " + adress));
+            await _restaurantStore.EditRestaurantAuth(adress, authModel);
+            await _auditLogStore.AddRecord(new AuditLogRecord(admin, $"{AuditLogExpressions.RESTAURANT_AUTH_CHANGED}{adress}"));
+        }
+        public async Task AddRestaurant(Restaurant restaurant, Guid admin)
+        {
+            await _restaurantStore.AddRestaurant(restaurant);
+            await _auditLogStore.AddRecord(new AuditLogRecord(admin, $"{AuditLogExpressions.RESTAURANT_ADDED}{restaurant.Adress}"));
         }
 
         public async Task RemoveRestaurant(string adress, Guid admin)
         {
-            await RestaurantStore.RemoveRestaurant(adress);
-            await AuditLogStore.AddRecord(new AuditLogRecord(admin, "Удален ресторан по адресу: " + adress));
+            await _restaurantStore.RemoveRestaurant(adress);
+            await _auditLogStore.AddRecord(new AuditLogRecord(admin, $"{AuditLogExpressions.RESTAURANT_REMOVED}{adress}"));
         }
     }
 }

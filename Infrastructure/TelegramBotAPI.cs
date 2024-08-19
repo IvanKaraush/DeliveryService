@@ -13,6 +13,8 @@ using Telegram.Bot.Types.Enums;
 using Domain.Models.ApplicationModels;
 using Amazon.Runtime.Internal.Util;
 using Microsoft.Extensions.Logging;
+using Telegram.Bot.Exceptions;
+using Infrastructure.Interfaces;
 
 namespace Infrastructure
 {
@@ -20,31 +22,31 @@ namespace Infrastructure
     {
         public TelegramBotAPI(IOptions<TelegramAPIOptions> options, ILogger<TelegramBotAPI> logger)
         {
-            Client = new TelegramBotClient(options.Value.TgBotToken);
-            HostId = options.Value.HostTgId;
-            Logger = logger;
-            HostAuthAccesMinutes = options.Value.HostAuthAccesMinutes;
+            _client = new TelegramBotClient(options.Value.TgBotToken);
+            _hostId = options.Value.HostTgId;
+            _logger = logger;
+            _hostAuthAccesMinutes = options.Value.HostAuthAccesMinutes;
         }
-        private readonly long HostId;
-        private readonly int HostAuthAccesMinutes;
-        private readonly ILogger<TelegramBotAPI> Logger;
-        private readonly ITelegramBotClient Client;
-        private object Locker = new();
-        private bool HostLoginedFlag = false;
+        private readonly long _hostId;
+        private readonly int _hostAuthAccesMinutes;
+        private readonly ILogger<TelegramBotAPI> _logger;
+        private readonly ITelegramBotClient _client;
+        private object _locker = new();
+        private bool _hostLoginedFlag = false;
         public bool IsHostLogined
         {
             get
             {
-                lock (Locker)
+                lock (_locker)
                 {
-                    return HostLoginedFlag;
+                    return _hostLoginedFlag;
                 }
             }
             private set
             {
-                lock (Locker)
+                lock (_locker)
                 {
-                    HostLoginedFlag = value;
+                    _hostLoginedFlag = value;
                 }
             }
         }
@@ -52,8 +54,10 @@ namespace Infrastructure
         {
             if (update?.Type == UpdateType.Message)
             {
-                var message = update.Message;                
-                if (message.Chat.Type == ChatType.Private && message.Chat.Id == HostId)
+                Message? message = update.Message;
+                if (message == null)
+                    throw new Exception("TG message is null");
+                if (message.Chat.Type == ChatType.Private && message.Chat.Id == _hostId)
                     if (message?.Text != null)
                     {
                         string messageText = message.Text.ToLower();
@@ -61,54 +65,62 @@ namespace Infrastructure
                         {
                             if (!IsHostLogined)
                             {
-                                OpenHostAuthAccesValue(cancellationToken);
-                                await Client.SendTextMessageAsync(message.Chat, "OK");
+                                await OpenHostAuthAccesValue(cancellationToken);
+                                await _client.SendTextMessageAsync(message.Chat, "OK");
                             }
                             else
-                                await Client.SendTextMessageAsync(message.Chat, "Acces to authorization is already opened | Доступ к авторизации уже открыт");
+                                await _client.SendTextMessageAsync(message.Chat, "Acces to authorization is already opened | Доступ к авторизации уже открыт");
                         }
-                        else await Client.SendTextMessageAsync(message.Chat, "Unknown command | Неизвестная команда");
+                        else await _client.SendTextMessageAsync(message.Chat, "Unknown command | Неизвестная команда");
                     }
             }
         }
         private async Task OpenHostAuthAccesValue(CancellationToken cancellationToken)
         {
             IsHostLogined = true;
-            await Task.Delay(TimeSpan.FromMinutes(HostAuthAccesMinutes), cancellationToken);
+            await Task.Delay(TimeSpan.FromMinutes(_hostAuthAccesMinutes), cancellationToken);
             IsHostLogined = false;
         }
         private async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
-            await Task.Run(() => Logger?.LogError(exception.Message));
+            await Task.Run(() => _logger?.LogError(exception.Message));
         }
         public async void Start(CancellationToken cancellationToken)
         {
-            var receiverOptions = new ReceiverOptions() { AllowedUpdates = { } };
-            Client.StartReceiving(HandleUpdateAsync, HandleErrorAsync, receiverOptions, cancellationToken);
-            await Client.SendTextMessageAsync(new ChatId(HostId), "Application launched | Приложение запущено");
+            try
+            {
+                ReceiverOptions receiverOptions = new ReceiverOptions() { AllowedUpdates = { } };
+                _client.StartReceiving(HandleUpdateAsync, HandleErrorAsync, receiverOptions, cancellationToken);
+                await _client.SendTextMessageAsync(new ChatId(_hostId), "Application launched | Приложение запущено");
+            }
+            catch (ApiRequestException)
+            {
+                _logger.LogCritical("Invalid telegram bot token");
+                throw;
+            }
         }
         public async Task Stop()
         {
-            await Client.SendTextMessageAsync(new ChatId(HostId), "Application stopped | Приложение остановлено");
+            await _client.SendTextMessageAsync(new ChatId(_hostId), "Application stopped | Приложение остановлено");
         }
         public async Task SendCongratulationsToUsers(List<string> idList, CancellationToken cancellationToken)
         {
-            foreach (var id in idList)
+            foreach (string id in idList)
             {
                 if (!cancellationToken.IsCancellationRequested)
                     try
                     {
-                        await Client.SendTextMessageAsync(new ChatId(id), "Поздравляем с днем рождения", cancellationToken: cancellationToken);
+                        await _client.SendTextMessageAsync(new ChatId(id), "Поздравляем с днем рождения", cancellationToken: cancellationToken);
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogWarning($"Can\'t send congratulations to ID: {id}\nMessage: {ex.Message}");
+                        _logger.LogWarning($"Can\'t send congratulations to ID: {id}\nMessage: {ex.Message}");
                     }
             }
         }
         public async Task SendHostAuthMessage()
         {
-            await Client.SendTextMessageAsync(new ChatId(HostId), "Login attempt, enter \"login\" | Попытка входа, введите \"вход\"");
+            await _client.SendTextMessageAsync(new ChatId(_hostId), "Login attempt, enter \"login\" | Попытка входа, введите \"вход\"");
         }
     }
 }

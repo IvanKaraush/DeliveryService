@@ -9,8 +9,8 @@ namespace Domain.Stores
 {
     public interface IAuditLogStore
     {
-        Task AddRecord(AuditLogRecord record);
-        Task<List<AuditLogRecord>> GetLastRecords(int count);
-        Task<int> GetRecordsCount();
+        public Task<List<AuditLogRecord>> GetLastRecords(int count);
+        public Task<int> GetRecordsCount();
+        public Task AddRecord(AuditLogRecord record);
     }
 }

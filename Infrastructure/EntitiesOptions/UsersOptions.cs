@@ -1,11 +1,11 @@
 ﻿using Domain.Models.Entities.SQLEntities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Persistence.EntitiesOptions
+namespace Infrastructure.EntitiesOptions
 {
-    public static class UsersOptions
+    internal static class UsersOptions
     {
-        public static void ApplyUsersOptions(this ModelBuilder modelBuilder)
+        internal static void ApplyUsersOptions(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().ToTable("Users");
             modelBuilder.Entity<User>().HasKey(u => u.Id);

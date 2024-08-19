@@ -4,9 +4,9 @@ namespace Domain.Stores
 {
     public interface ICardStore
     {
-        Task AddCard(Card card);
-        Task RemoveCard(string number);
-        Task<List<Card>> UserCards(Guid userId);
-        Task<Card> GetCardByNumber(string number);
+        public Task<Card> GetCardByNumber(string number);
+        public Task<List<Card>> GetUserCards(Guid userId);
+        public Task AddCard(Card card);
+        public Task RemoveCard(string number);
     }
 }

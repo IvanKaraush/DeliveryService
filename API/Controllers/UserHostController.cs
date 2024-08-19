@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Domain.Models.Entities.SQLEntities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,28 +13,34 @@ namespace API.Controllers
     {
         public UserHostController(IUserHostService userHostService) 
         {
-            UserHostService = userHostService;
+            _userHostService = userHostService;
         }
-        private readonly IUserHostService UserHostService;
+        private readonly IUserHostService _userHostService;
         [HttpPatch]
         [Route("debitbonuses")]
         public async Task<IActionResult> DebitBonuses(Guid id, decimal amount)
         {
-            await UserHostService.DebitBonuses(id, amount);
+            if (id == Guid.Empty)
+                return BadRequest("Arguments are null");
+            await _userHostService.DebitBonuses(id, amount);
             return Ok();
         }
         [HttpPatch]
         [Route("assignadm")]
         public async Task<IActionResult> AssignAdm(Guid id)
         {
-            await UserHostService.AssignAsAdmin(id);
+            if (id == Guid.Empty)
+                return BadRequest("Arguments are null");
+            await _userHostService.AssignUserAsAdmin(id);
             return Ok();
         }
         [HttpPatch]
         [Route("unassignadm")]
         public async Task<IActionResult> UnassignAdm(Guid id)
         {
-            await UserHostService.UnassignAsAdmin(id);
+            if (id == Guid.Empty)
+                return BadRequest("Arguments are null");
+            await _userHostService.UnassignUserAsAdmin(id);
             return Ok();
         }
     }

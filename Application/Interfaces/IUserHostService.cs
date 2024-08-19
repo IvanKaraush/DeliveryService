@@ -10,8 +10,8 @@ namespace Application.Interfaces
 {
     public interface IUserHostService
     {
-        Task DebitBonuses(Guid id, decimal amount);
-        Task AssignAsAdmin(Guid id);
-        Task UnassignAsAdmin(Guid id);
+        public Task DebitBonuses(Guid id, decimal amount);
+        public Task AssignUserAsAdmin(Guid id);
+        public Task UnassignUserAsAdmin(Guid id);
     }
 }

@@ -5,16 +5,16 @@ namespace Domain.Stores
 {
     public interface IUserStore
     {
-        Task AddUser(User user);
-        Task RemoveUser(Guid id);
-        Task<bool> EditUserTelegram(Guid id, string newTelegramId);
-        Task AddUserBirthDate(Guid id, DateOnly birthDate);
-        Task DebitBonuses(Guid id, decimal amount);
-        Task<User> GetUserByAuth(AuthModel authModel);
-        Task<User> GetUserById(Guid id);
-        Task EditUserAuth(Guid id, AuthModel newAuth);
-        Task AssignAsAdmin(Guid id);
-        Task UnassignAsAdmin(Guid id);
-        Task<List<string>> GetBirthdayPeopleTelegram();
+        public Task<User> GetUserById(Guid id);
+        public Task<User> GetUserByAuth(AuthModel authModel);
+        public Task<List<string>> GetBirthdayPeopleTelegram();
+        public Task AddUser(User user);
+        public Task RemoveUser(Guid id);
+        public Task<bool> EditUserTelegram(Guid id, string newTelegramId);
+        public Task AddUserBirthDate(Guid id, DateOnly birthDate);
+        public Task DebitBonuses(Guid id, decimal amount);
+        public Task EditUserAuth(Guid id, AuthModel newAuth);
+        public Task AssignAsAdmin(Guid id);
+        public Task UnassignAsAdmin(Guid id);
     }
 }

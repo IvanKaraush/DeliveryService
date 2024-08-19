@@ -10,7 +10,7 @@ namespace Domain.Stores
 {
     public interface ISoldProductStore
     {
-        Task AddSoldProduct(SoldProduct soldProduct);
-        Task<List<int>> GetHotArticleList(int goodsCount);
+        public Task<List<int>> GetHotArticleList(int goodsCount);
+        public Task AddSoldProduct(SoldProduct soldProduct);
     }
 }

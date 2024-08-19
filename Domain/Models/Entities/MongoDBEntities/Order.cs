@@ -11,11 +11,11 @@ namespace Domain.Models.Entities.MongoDBEntities
         [BsonElement]
         public Guid UserId { get; set; }
         [BsonElement]
-        public string Adress { get; set; }
+        public required string Adress { get; set; }
         [BsonElement]
-        public Coordinates Coordinates { get; set; }
+        public required Coordinates Coordinates { get; set; }
         [BsonElement]
-        public Dictionary<int, int> GoodsList { get; set; }
+        public required Dictionary<int, int> GoodsList { get; set; }
         [BsonElement]
         public bool IsCooking { get; set; }
         [BsonElement]

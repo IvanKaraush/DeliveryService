@@ -9,8 +9,8 @@ namespace Application.Interfaces
 {
     public interface IReportAdminService
     {
-        Task RemoveReport(DateTime id, Guid admin);
-        Task<List<DateTime>> GetReportsIds();
-        Task<Report> GetReportById(DateTime id);
+        public Task<Report> GetReportById(DateTime id);
+        public Task<List<DateTime>> GetReportsIds();
+        public Task RemoveReport(DateTime id, Guid admin);
     }
 }

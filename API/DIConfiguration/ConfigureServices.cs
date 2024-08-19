@@ -1,14 +1,17 @@
 ﻿using Application.Interfaces;
 using Application.Services;
 using Infrastructure;
+using Infrastructure.Interfaces;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace API.DIConfiguration
 {
-    public static class ConfigureServices
+    internal static partial class ConfigurationExtensions
     {
-        public static void ConfigureServs(this WebApplicationBuilder builder)
+        internal static void ConfigureServices(this WebApplicationBuilder builder)
         {
+            builder.Services.AddScoped<IUserCacheService, UserCacheService>();
+            builder.Services.AddScoped<IProductCacheService, ProductCacheService>();
             builder.Services.AddScoped<IAuditHostService, AuditHostService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ICardsUserService, CardsUserService>();
@@ -24,7 +27,6 @@ namespace API.DIConfiguration
             builder.Services.AddScoped<IUserUserService, UserUserService>();
             builder.Services.AddSingleton<ITelegramBotApi, TelegramBotAPI>();
             builder.Services.AddHostedService<BotService>();
-            builder.Services.AddHostedService<DirectoryService>();
         }
     }
 }

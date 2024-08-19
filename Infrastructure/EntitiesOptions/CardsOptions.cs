@@ -1,11 +1,11 @@
 ﻿using Domain.Models.Entities.SQLEntities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Persistence.EntitiesOptions
+namespace Infrastructure.EntitiesOptions
 {
-    public static class CardsOptions
+    internal static class CardsOptions
     {
-        public static void ApplyCardsOptions(this ModelBuilder modelBuilder)
+        internal static void ApplyCardsOptions(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Card>().ToTable("Cards");
             modelBuilder.Entity<Card>().HasKey(c=>c.Number);

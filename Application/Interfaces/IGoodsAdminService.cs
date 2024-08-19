@@ -12,13 +12,13 @@ namespace Application.Interfaces
 {
     public interface IGoodsAdminService
     {
-        Task AddProduct(ProductInputModel product, Guid admin);
-        Task RemoveProduct(int article, Guid admin);
-        Task EditPrice(int article, decimal price, Guid admin);
-        Task Show(int article, Guid admin);
-        Task Hide(int article, Guid admin);
-        Task<List<ProductOutputModel>> GetInvisibleGoodsList(int page, int pageSize, string? textInTitle);
-        Task AttachImage(IFormFile file, int article, Guid admin);
-        Task DetachImage(int article, Guid admin);
+        public Task<List<ProductOutputModel>> GetInvisibleGoodsList(int page, int pageSize, string? textInTitle);
+        public Task AddProduct(ProductInputModel product, Guid admin);
+        public Task RemoveProduct(int article, Guid admin);
+        public Task EditPrice(int article, decimal price, Guid admin);
+        public Task ShowProduct(int article, Guid admin);
+        public Task HideProduct(int article, Guid admin);
+        public Task AttachImage(IFormFile file, int article, Guid admin);
+        public Task DetachImage(int article, Guid admin);
     }
 }

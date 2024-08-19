@@ -14,25 +14,25 @@ namespace Application.Services
     {
         public ReportAdminService(IReportStore reportStore, IAuditLogStore auditLogStore) 
         {
-            ReportStore = reportStore;
-            AuditLogStore = auditLogStore;
+            _reportStore = reportStore;
+            _auditLogStore = auditLogStore;
         }
-        private readonly IReportStore ReportStore;
-        private readonly IAuditLogStore AuditLogStore;
+        private readonly IReportStore _reportStore;
+        private readonly IAuditLogStore _auditLogStore;
         public async Task<Report> GetReportById(DateTime id)
         {
-            return await ReportStore.GetReportById(id);
+            return await _reportStore.GetReportById(id);
         }
 
         public async Task<List<DateTime>> GetReportsIds()
         {
-            return await ReportStore.GetReportsIds();
+            return await _reportStore.GetReportsIds();
         }
 
         public async Task RemoveReport(DateTime id, Guid admin)
         {
-            await ReportStore.RemoveReport(id);
-            await AuditLogStore.AddRecord(new AuditLogRecord(admin, "Закрыто обращение " + id.ToString()));
+            await _reportStore.RemoveReport(id);
+            await _auditLogStore.AddRecord(new AuditLogRecord(admin, $"{AuditLogExpressions.REPORT_CLOSED}{id.ToString()}"));
         }
     }
 }

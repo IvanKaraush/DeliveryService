@@ -4,7 +4,7 @@
     {
         public int Article { get; set; }
         public decimal Price { get; set; }
-        public string Title { get; set; }
+        public required string Title { get; set; }
         public string? ImageName { get; set; }
         public TimeOnly? AverageCookingTime { get; set; }
         public int AlreadyCooked { get; set; }

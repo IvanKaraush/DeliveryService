@@ -3,6 +3,7 @@ using Domain.Models.VievModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace API.Controllers
 {
@@ -12,33 +13,36 @@ namespace API.Controllers
     {
         public GoodsUserController(IGoodsUserService goodsUserService) 
         {
-            GoodsUserService = goodsUserService;
+            _goodsUserService = goodsUserService;
         }
-        private readonly IGoodsUserService GoodsUserService;
+        private readonly IGoodsUserService _goodsUserService;
+
         [HttpGet]
-        [Route("hot")]
-        public async Task<IActionResult> Hot(int count)
+        [Route("getproduct")]
+        public async Task<IActionResult> GetProduct(int article)
         {
-            return Ok(await GoodsUserService.GetHotGoodsList(count));
+            return Ok(await _goodsUserService.GetProduct(article));
+        }
+        [HttpGet]
+        [Route("gethotlist")]
+        public async Task<IActionResult> GetHotList(int count)
+        {
+            return Ok(await _goodsUserService.GetHotGoodsList(count));
         }
         [HttpPost]
-        [Route("list")]
-        public async Task<IActionResult> List(int page, int pageSize, GoodsListOptionsModel listOptions)
+        [Route("getlist")]
+        public async Task<IActionResult> GetList(int page, int pageSize, GoodsListOptionsModel listOptions)
         {
-            return Ok(await GoodsUserService.GetVisibleGoodsList(page, pageSize, listOptions));
-        }
-        [HttpGet]
-        [Route("product")]
-        public async Task<IActionResult> Product(int article)
-        {
-            return Ok(await GoodsUserService.GetProduct(article));
+            if (listOptions == null)
+                return BadRequest("Arguments are null");
+            return Ok(await _goodsUserService.GetVisibleGoodsList(page, pageSize, listOptions));
         }
         [HttpPatch]
         [Route("rate")]
         [Authorize("RequireUserRole")]
         public async Task<IActionResult> Rate(int article, int mark)
         {
-            await GoodsUserService.RateProduct(article, mark);
+            await _goodsUserService.RateProduct(article, mark);
             return Ok();
         }
     }

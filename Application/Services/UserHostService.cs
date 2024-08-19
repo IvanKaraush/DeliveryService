@@ -12,22 +12,22 @@ namespace Application.Services
     {
         public UserHostService(IUserStore userStore)
         {
-            UserStore = userStore;
+            _userStore = userStore;
         }
-        private readonly IUserStore UserStore;
-        public async Task AssignAsAdmin(Guid id)
+        private readonly IUserStore _userStore;
+        public async Task AssignUserAsAdmin(Guid id)
         {
-            await UserStore.AssignAsAdmin(id);
+            await _userStore.AssignAsAdmin(id);
         }
 
         public async Task DebitBonuses(Guid id, decimal amount)
         {
-            await UserStore.DebitBonuses(id, amount);
+            await _userStore.DebitBonuses(id, amount);
         }
 
-        public async Task UnassignAsAdmin(Guid id)
+        public async Task UnassignUserAsAdmin(Guid id)
         {
-            await UserStore.UnassignAsAdmin(id);
+            await _userStore.UnassignAsAdmin(id);
         }
     }
 }

@@ -11,9 +11,9 @@ namespace Application.Interfaces
 {
     public interface IOrderUserService
     {
-        Task AddOrder(OrderModel order);
-        Task RemoveOrder(Guid id);
-        Task<OrderModel> GetOrderById(Guid id);
-        Task<List<OrderModel>> GetOrdersByUserId(Guid id);
+        public Task<OrderModel> GetOrderById(Guid id);
+        public Task<List<OrderModel>> GetOrdersByUserId(Guid id);
+        public Task AddOrder(OrderModel order);
+        public Task RemoveOrder(Guid id);
     }
 }

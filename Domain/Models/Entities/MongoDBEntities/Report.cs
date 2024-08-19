@@ -9,6 +9,6 @@ namespace Domain.Models.Entities.MongoDBEntities
         [BsonElement]
         public Guid UserId { get; set; }
         [BsonElement]
-        public string Message { get; set; }
+        public required string Message { get; set; }
     }
 }

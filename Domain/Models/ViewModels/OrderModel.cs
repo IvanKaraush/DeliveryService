@@ -10,7 +10,15 @@ namespace Domain.Models.VievModels
 {
     public class OrderModel
     {
-        public OrderModel() { }
+        public OrderModel(OrderCreateModel order, Guid userId) 
+        {
+            Adress = order.Adress;
+            Coordinates = order.Coordinates;
+            GoodsList = order.GoodsList;
+            PaymentCard = order.PaymentCard;
+            AreBonusesUsing = order.AreBonusesUsing;
+            UserId = userId;
+        }
         public OrderModel(Order order)
         {
             Adress = order.Adress;
@@ -19,7 +27,9 @@ namespace Domain.Models.VievModels
             PaymentCard = order.PaymentCard;
             AreBonusesUsing = order.AreBonusesUsing;
             UserId = order.UserId;
+            Id = order.Id;
         }
+        public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public string Adress { get; set; }
         public Coordinates Coordinates { get; set; }

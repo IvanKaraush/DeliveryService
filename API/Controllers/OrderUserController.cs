@@ -15,35 +15,53 @@ namespace API.Controllers
     {
         public OrderUserController(IOrderUserService orderUserService) 
         {
-            OrderUserService = orderUserService;
+            _orderUserService = orderUserService;
         }
-        private readonly IOrderUserService OrderUserService;
+        private readonly IOrderUserService _orderUserService;
+
+        [HttpGet]
+        [Route("Getorder")]
+        public async Task<IActionResult> GetOrder(Guid id)
+        {
+            if (id == Guid.Empty)
+                return BadRequest("Arguments are null");
+            return Ok(await _orderUserService.GetOrderById(id));
+        }
+
+        [HttpGet]
+        [Route("getuserorders")]
+        public async Task<IActionResult> GetUserOrders()
+        {
+            string? userGuidString = HttpContext.User.FindFirst(ClaimsIdentity.DefaultNameClaimType)?.Value;
+            if (userGuidString == null)
+                return BadRequest("User id in token not found");
+            if (!Guid.TryParse(userGuidString, out Guid userGuid))
+                return BadRequest("Invalid user id in token");
+            return Ok(await _orderUserService.GetOrdersByUserId(userGuid));
+        }
         [HttpPost]
         [Route("makeorder")]
         public async Task<IActionResult> MakeOrder(OrderCreateModel orderCreateModel)
         {
-            OrderModel orderModel = orderCreateModel.ToOrderModel(Guid.Parse(HttpContext.User.FindFirst(ClaimsIdentity.DefaultNameClaimType)?.Value));
-            await OrderUserService.AddOrder(orderModel);
+            if (orderCreateModel == null)
+                return BadRequest("Arguments are null");
+            string? userGuidString = HttpContext.User.FindFirst(ClaimsIdentity.DefaultNameClaimType)?.Value;
+            if (userGuidString == null)
+                return BadRequest("User id in token not found");
+            if (!Guid.TryParse(userGuidString, out Guid userGuid))
+                return BadRequest("Invalid user id in token");
+            OrderModel orderModel = orderCreateModel.ToOrderModel(userGuid);
+            await _orderUserService.AddOrder(orderModel);
             return Ok();
-        }
-        [HttpGet]
-        [Route("userorders")]
-        public async Task<IActionResult> UserOrders()
-        {
-            return Ok(await OrderUserService.GetOrdersByUserId(Guid.Parse(HttpContext.User.FindFirst(ClaimsIdentity.DefaultNameClaimType)?.Value)));
-        }
-        [HttpGet]
-        [Route("order")]
-        public async Task<IActionResult> Order(Guid id)
-        {
-            return Ok(await OrderUserService.GetOrderById(id));
         }
 
         [HttpDelete]
         [Route("cancelorder")]
         public async Task<IActionResult> CancelOrder(Guid id)
         {
-            await OrderUserService.RemoveOrder(id);
+            if (id == Guid.Empty)
+                return BadRequest("Arguments are null");
+            await _orderUserService.RemoveOrder(id);
             return Ok();
         }
     }

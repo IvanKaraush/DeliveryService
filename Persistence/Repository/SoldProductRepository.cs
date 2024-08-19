@@ -15,25 +15,25 @@ namespace Persistence.Repository
 {
     public class SoldProductRepository : ISoldProductStore
     {
-        public SoldProductRepository(IMongoContext context, IOptions<ReposOptions> options)
+        public SoldProductRepository(IMongoContext context, IOptions<RepositoryOptions> options)
         {
-            Context = context;
-            HotGoodsExpirationHours = options.Value.HotGoodsExpirationHours;
+            _context = context;
+            _hotGoodsExpirationHours = options.Value.HotGoodsExpirationHours;
         }
-        private readonly IMongoContext Context;
-        private readonly int HotGoodsExpirationHours;
-        public async Task AddSoldProduct(SoldProduct soldProduct)
-        {
-            soldProduct.ExpireAt = DateTime.Now.AddHours(HotGoodsExpirationHours);
-            await Context.SoldGoods.InsertOneAsync(soldProduct);
-        }
-
+        private readonly IMongoContext _context;
+        private readonly int _hotGoodsExpirationHours;
         public async Task<List<int>> GetHotArticleList(int goodsCount)
         {
-            var querry = from SoldProduct in Context.SoldGoods.AsQueryable()
-                      group SoldProduct by SoldProduct.Article into g
-                      select new {Article = g.Key, Count =  g.Count()};
-            return await querry.OrderByDescending(x => x.Count).Select(x=>x.Article).Take(goodsCount).ToListAsync();
+            var querry = from SoldProduct in _context.SoldGoods.AsQueryable()
+                         group SoldProduct by SoldProduct.Article into g
+                         select new { Article = g.Key, Count = g.Count() };
+            return await querry.OrderByDescending(x => x.Count).Select(x => x.Article).Take(goodsCount).ToListAsync();
+        }
+
+        public async Task AddSoldProduct(SoldProduct soldProduct)
+        {
+            soldProduct.ExpireAt = DateTime.Now.AddHours(_hotGoodsExpirationHours);
+            await _context.SoldGoods.InsertOneAsync(soldProduct);
         }
     }
 }

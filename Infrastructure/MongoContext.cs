@@ -1,5 +1,6 @@
 ﻿using Domain.Models.ApplicationModels;
 using Domain.Models.Entities.MongoDBEntities;
+using Infrastructure.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -9,31 +10,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Persistence
+namespace Infrastructure
 {
     public class MongoContext : IMongoContext
     {
-        public MongoContext(IOptions<MongoDBOptions> mongoOptions, IOptions<ReposOptions> repositoryOptions, ILogger<MongoContext> logger)
+        public MongoContext(IOptions<MongoDBOptions> mongoOptions, IOptions<RepositoryOptions> repositoryOptions, ILogger<MongoContext> logger)
         {
-            MongoOptions = mongoOptions.Value;
-            var client = new MongoClient(MongoOptions.MongoDefaultConnection);
+            _mongoOptions = mongoOptions.Value;
+            var client = new MongoClient(_mongoOptions.MongoDefaultConnection);
             if (client == null)
             {
                 logger.LogCritical("Mongo Client not found");
                 throw new Exception("Mongo Client not found"); 
             }
-            logger.LogInformation("Connected Mongo Client on: " + MongoOptions.MongoDefaultConnection);
-            if (!client.ListDatabaseNames().ToList().Contains(MongoOptions.DBName))
+            logger.LogInformation("Connected Mongo Client on: " + _mongoOptions.MongoDefaultConnection);
+            if (!client.ListDatabaseNames().ToList().Contains(_mongoOptions.DBName))
             {
                 logger.LogCritical("Mongo Database not found");
                 throw new Exception("Mongo Database not found");
             }
-            Database = client.GetDatabase(MongoOptions.DBName);
-            logger.LogInformation("Connected Mongo Database: " + MongoOptions.DBName);
-            Database.CreateCollection(MongoOptions.SoldGoodsCollectionName);
-            Database.CreateCollection(MongoOptions.ReportsCollectionName);
-            Database.CreateCollection(MongoOptions.OrdersCollectionName);
-            Database.CreateCollection(MongoOptions.AuditRecordsCollectionName);
+            _database = client.GetDatabase(_mongoOptions.DBName);
+            logger.LogInformation("Connected Mongo Database: " + _mongoOptions.DBName);
+            _database.CreateCollection(_mongoOptions.SoldGoodsCollectionName);
+            _database.CreateCollection(_mongoOptions.ReportsCollectionName);
+            _database.CreateCollection(_mongoOptions.OrdersCollectionName);
+            _database.CreateCollection(_mongoOptions.AuditRecordsCollectionName);
             SoldGoods.Indexes.CreateOne(new CreateIndexModel<SoldProduct>
             (
                 keys: Builders<SoldProduct>.IndexKeys.Ascending(p => p.ExpireAt),
@@ -53,34 +54,34 @@ namespace Persistence
                 }
             ));
         }
-        private readonly MongoDBOptions MongoOptions;
-        private readonly IMongoDatabase Database;
+        private readonly MongoDBOptions _mongoOptions;
+        private readonly IMongoDatabase _database;
         public IMongoCollection<SoldProduct> SoldGoods
         {
             get
             {
-                return Database.GetCollection<SoldProduct>(MongoOptions.SoldGoodsCollectionName);
+                return _database.GetCollection<SoldProduct>(_mongoOptions.SoldGoodsCollectionName);
             }
         }
         public IMongoCollection<Report> Reports
         {
             get
             {
-                return Database.GetCollection<Report>(MongoOptions.ReportsCollectionName);
+                return _database.GetCollection<Report>(_mongoOptions.ReportsCollectionName);
             }
         }
         public IMongoCollection<Order> Orders
         {
             get
             {
-                return Database.GetCollection<Order>(MongoOptions.OrdersCollectionName);
+                return _database.GetCollection<Order>(_mongoOptions.OrdersCollectionName);
             }
         }
         public IMongoCollection<AuditLogRecord> AuditRecords
         {
             get
             {
-                return Database.GetCollection<AuditLogRecord>(MongoOptions.AuditRecordsCollectionName);
+                return _database.GetCollection<AuditLogRecord>(_mongoOptions.AuditRecordsCollectionName);
             }
         }     
     }

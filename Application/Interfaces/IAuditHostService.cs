@@ -9,7 +9,7 @@ namespace Application.Interfaces
 {
     public interface IAuditHostService
     {
-        Task<List<AuditLogRecord>> GetLastRecords(int count);
-        Task<int> GetRecordsCount();
+        public Task<List<AuditLogRecord>> GetLastRecords(int count);
+        public Task<int> GetRecordsCount();
     }
 }

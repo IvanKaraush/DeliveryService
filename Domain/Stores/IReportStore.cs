@@ -9,9 +9,9 @@ namespace Domain.Stores
 {
     public interface IReportStore
     {
-        Task AddReport(Report report);
-        Task RemoveReport(DateTime id);
-        Task<List<DateTime>> GetReportsIds();
-        Task<Report> GetReportById(DateTime id);
+        public Task<Report> GetReportById(DateTime id);
+        public Task<List<DateTime>> GetReportsIds();
+        public Task AddReport(Report report);
+        public Task RemoveReport(DateTime id);
     }
 }

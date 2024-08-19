@@ -10,10 +10,10 @@ namespace Application.Interfaces
 {
     public interface IOrderRestaurantService
     {
-        Task<List<OrderModel>> GetOrdersList(int count, Coordinates restaurantCoordinates);
-        Task AcceptOrder(Guid id);
-        Task<OrderModel> GetOrderById(Guid id);
-        Task RemoveUnitFromList(Guid id, int article, bool wasCookedEarlier);
-        Task RemoveOrder(Guid id);
+        public Task<OrderModel> GetOrderById(Guid id);
+        public Task<List<OrderModel>> GetOrdersList(int count, Coordinates restaurantCoordinates);
+        public Task AcceptOrder(Guid id);
+        public Task RemoveUnitFromList(Guid id, int article, bool wasCookedEarlier);
+        public Task RemoveOrder(Guid id);
     }
 }

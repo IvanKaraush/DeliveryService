@@ -14,29 +14,21 @@ namespace Application.Services
     {
         public OrderRestaurantService(IOrderStore orderStore, ISoldProductStore soldProductStore, IProductStore productStore)
         {
-            OrderStore = orderStore;
-            SoldProductStore = soldProductStore;
-            ProductStore = productStore;
+            _orderStore = orderStore;
+            _soldProductStore = soldProductStore;
+            _productStore = productStore;
         }
-        private readonly IOrderStore OrderStore;
-        private readonly ISoldProductStore SoldProductStore;
-        private readonly IProductStore ProductStore;
-        public async Task AcceptOrder(Guid id)
-        {
-            await OrderStore.AcceptOrder(id);
-        }
-        public async Task RemoveOrder(Guid id)
-        {
-            await OrderStore.RemoveOrder(id);
-        }
+        private readonly IOrderStore _orderStore;
+        private readonly ISoldProductStore _soldProductStore;
+        private readonly IProductStore _productStore;
         public async Task<OrderModel> GetOrderById(Guid id)
         {
-            return new OrderModel(await OrderStore.GetOrderById(id));
+            return new OrderModel(await _orderStore.GetOrderById(id));
         }
 
         public async Task<List<OrderModel>> GetOrdersList(int count, Coordinates restaurantCoordinates)
         {
-            List<Order> orders = await OrderStore.GetOrdersList(count, restaurantCoordinates);
+            List<Order> orders = await _orderStore.GetOrdersList(count, restaurantCoordinates);
             List<OrderModel> orderModels = new List<OrderModel>();
             foreach (Order order in orders)
             {
@@ -44,15 +36,23 @@ namespace Application.Services
             }
             return orderModels;
         }
+        public async Task AcceptOrder(Guid id)
+        {
+            await _orderStore.AcceptOrder(id);
+        }
+        public async Task RemoveOrder(Guid id)
+        {
+            await _orderStore.RemoveOrder(id);
+        }
 
         public async Task RemoveUnitFromList(Guid id, int article, bool wasCookedEarlier)
         {
-            DateTime timeMarker = await OrderStore.RemoveUnitFromList(id, article);
+            DateTime timeMarker = await _orderStore.RemoveUnitFromList(id, article);
             if (!wasCookedEarlier)
             {
-                await SoldProductStore.AddSoldProduct(new SoldProduct(article));
+                await _soldProductStore.AddSoldProduct(new SoldProduct(article));
                 TimeOnly cookingTime = new TimeOnly((DateTime.Now - timeMarker).Ticks);
-                await ProductStore.UpdateCookingTime(article, cookingTime);
+                await _productStore.UpdateCookingTime(article, cookingTime);
             }            
         }
     }
